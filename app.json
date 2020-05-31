@@ -1,0 +1,19 @@
+{
+  "pages": [
+    "pages/setting/index/index",
+    "pages/home/index/index",
+    "pages/home/track/track",
+    "pages/login/phone/phone",
+    "pages/login/account/account",
+    "pages/setting/device/edit/edit",
+    "pages/setting/device/manage/manage",
+    "pages/setting/device/renew/renew",
+    "pages/setting/device/setting/setting"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  }
+}
