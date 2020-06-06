@@ -4,6 +4,7 @@
       <div class="avtar"></div>
       <div>名称</div>
       <input class="weui-input" auto-focus placeholder="将会获取焦点"/>
+      <img class="scan" src="/static/resources/scan.webp" alt="">
     </div>
     <map
       id="map"
@@ -84,6 +85,10 @@
     z-index: 1;
     display: flex;
     align-items: center;
+    .scan {
+      width: 32rpx;
+      height: 32rpx;
+    }
   }
 }
 </style>

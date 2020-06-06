@@ -1,8 +1,8 @@
 {
   "pages": [
+    "pages/home/index/main",
     "pages/iview/iview_dashboard/main",
     "pages/setting/index/main",
-    "pages/home/index/main",
     "pages/home/track/main",
     "pages/login/phone/main",
     "pages/login/account/main",
