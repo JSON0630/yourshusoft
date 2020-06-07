@@ -1,56 +1,50 @@
 <template>
   <div class="device_list">
-    <!-- <i-tabs class="device_tab"  current="0" color="#f759ab" bindchange="handleChange">
-      <i-tab key="tab1" title="全部"></i-tab>
-      <i-tab key="tab2" title="在线"></i-tab>
-      <i-tab key="tab3" title="离线"></i-tab>
-    </i-tabs> -->
     <div class="device_tab">
-          <span v-for="(x,key) in tabsList" :key=key :class="key == 1?'device_checked':''">{{x}}</span>
-      </div>
+      <span v-for="(x,key) in tabsList" :key=key :class="key == 1?'device_checked':''">{{x}}</span>
+    </div>
     <div class="search_box">
       <div class="search">
         <img class="search_img" src="/static/resources/setting/search.png"/>
         <input class="search_text" type="text" placeholder="请输入设备名"/>
-        <!-- <span class="search_cancel">取消</span> -->
         <img class="search_img search_del" src="/static/resources/setting/cha.png"/>
       </div> 
     </div>
     <div class="device_item">
-        <div class="device_item_top">
-            <img class="device_person" src="/static/resources/setting/person.png"/>
-            <div>
-              <p class="device_status">
-                <span class="device_name">名称</span>
-                 <span class="offline"> 
-                    离线
-                  </span>
-                <span class="device_batteray_span"> 
-                  <img class="device_batteray" src="/static/resources/setting/batteray_0.png"/>
-                  0%
-                  </span>
-              </p>
-              <p class="device_ads">贵州省 毕节市 大方县 石光路 靠近金利家私(石关路) 贵州省 毕节市 大方县 石光路 靠近金利家私</p>
-            </div>
-        </div>
-        <div class="device_item_bottom">
-          <p>
-               <img class="device_dingwei" src="/static/resources/setting/dingwei.png"/>
-                  定位
-          </p>
-          <p>
-               <img class="device_guiji" src="/static/resources/setting/guiji.png"/>
-                  轨迹
-          </p>
-          <p>
-               <img class="device_set" src="/static/resources/setting/set.png"/>
-                  设置
-          </p>
-          <p>
-               <img class="device_more" src="/static/resources/setting/more.png"/>
-                  更多
-          </p>
-        </div>
+      <div class="device_item_top">
+          <img class="device_person" src="/static/resources/setting/person.png"/>
+          <div>
+            <p class="device_status">
+              <span class="device_name">名称</span>
+                <span class="offline"> 
+                  离线
+                </span>
+              <span class="device_batteray_span"> 
+                <img class="device_batteray" src="/static/resources/setting/batteray_0.png"/>
+                0%
+                </span>
+            </p>
+            <p class="device_ads">贵州省 毕节市 大方县 石光路 靠近金利家私(石关路) 贵州省 毕节市 大方县 石光路 靠近金利家私</p>
+          </div>
+      </div>
+      <div class="device_item_bottom">
+        <p>
+              <img class="device_dingwei" src="/static/resources/setting/dingwei.png"/>
+                定位
+        </p>
+        <p>
+              <img class="device_guiji" src="/static/resources/setting/guiji.png"/>
+                轨迹
+        </p>
+        <p>
+              <img class="device_set" src="/static/resources/setting/set.png"/>
+                设置
+        </p>
+        <p>
+              <img class="device_more" src="/static/resources/setting/more.png"/>
+                更多
+        </p>
+      </div>
     </div>
   </div>
 </template>
