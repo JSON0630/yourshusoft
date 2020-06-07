@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/setting/device/setting/main",
     "pages/login/account/main",
     "pages/home/index/main",
     "pages/home/track/main",
@@ -8,8 +9,7 @@
     "pages/setting/edition/main",
     "pages/setting/device/edit/main",
     "pages/setting/device/manage/main",
-    "pages/setting/device/renew/main",
-    "pages/setting/device/setting/main"
+    "pages/setting/device/renew/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

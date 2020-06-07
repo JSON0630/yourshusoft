@@ -1,6 +1,6 @@
 <template>
   <div>
-    device edit
+    fff
   </div>
 </template>
 
