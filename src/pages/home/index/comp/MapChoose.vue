@@ -1,7 +1,7 @@
 <template>
   <block>
     <div class="MapChoose" :class="{isTop: hasNewMsg}" @click="showDrawer=true">
-      <img class="map" src="/static/resources/home/map.png" alt="">
+      <img class="img_map" src="/static/resources/home/map.png" alt="">
       <div>地图</div>
     </div>
     <Drawer v-model="showDrawer">
@@ -59,8 +59,8 @@ export default {
   padding: 12rpx 16rpx 8rpx;
   transition: top .3s ease;
   &.isTop { top: 12vh; }
-  img {
-    &.map { width: 29rpx; height: 28rpx; }
+  .img {
+    &_map { width: 29rpx; height: 28rpx; }
   }
 }
 .DrawerMap {

@@ -2,14 +2,14 @@
   <block>
     <div class="TopSearch" v-if="!showSelect">
       <navigator url="/pages/setting/index/main">
-        <img class="avatar" :src="userInfo.avatarUrl" />
+        <img class="img_avatar" :src="userInfo.avatarUrl" />
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
-        <img class="arrow_down" src="/static/resources/home/arrow_down.png" alt="">
+        <img class="img_arrow_down" src="/static/resources/home/arrow_down.png" alt="">
       </div>
-      <img class="question" src="/static/resources/home/question.png" alt="">
-      <img class="scan" src="/static/resources/home/scan.png" alt="">
+      <img class="img_question" src="/static/resources/home/question.png" alt="">
+      <img class="img_scan" src="/static/resources/home/scan.png" alt="">
     </div>
     <div class="TopSearch" v-else>
       <input class="flex-1" type="text" placeholder="请输入设备名称或imei号">
@@ -72,11 +72,6 @@ export default {
   border-radius: 8rpx;
   box-shadow: 0 0 6rpx #ccc;
   padding: 0 20rpx;
-  .avatar {
-    width: 60rpx;
-    height: 60rpx;
-    border-radius: 50%;
-  }
   .search {
     margin-left: 30rpx;
     display: flex;
@@ -92,11 +87,15 @@ export default {
   .cancel {
     color: #666;
     font-size: 28rpx;
+    height: 7.2vh;
+    line-height: 7.2vh;
+    padding: 0 30rpx;
   }
-  img {
-    &.arrow_down { width: 17rpx; height: 12rpx; }
-    &.question { width: 34rpx; height: 34rpx; margin-left: 40rpx; }
-    &.scan { width: 32rpx; height: 32rpx; margin-left: 30rpx; }
+  .img {
+    &_avatar { width: 60rpx; height: 60rpx; border-radius: 50%; }
+    &_arrow_down { width: 17rpx; height: 12rpx; }
+    &_question { width: 34rpx; height: 34rpx; margin-left: 40rpx; }
+    &_scan { width: 32rpx; height: 32rpx; margin-left: 30rpx; }
   }
 }
 .DeviceList {

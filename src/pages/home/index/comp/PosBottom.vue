@@ -1,14 +1,14 @@
 <template>
   <div class="PosBottom">
     <navigator url="/pages/setting/device/setting/main" class="bottom_item">
-      <img class="setting" src="/static/resources/home/setting.png" alt="">
+      <img class="img_setting" src="/static/resources/home/setting.png" alt="">
       <div>设置</div>
     </navigator>
     <div class="pos_wrap">
-      <img class="pos" src="/static/resources/home/pos.png" alt="">
+      <img class="img_pos" src="/static/resources/home/pos.png" alt="">
     </div>
     <navigator url="/pages/home/track/main" class="bottom_item">
-      <img class="track" src="/static/resources/home/track.png" alt="">
+      <img class="img_track" src="/static/resources/home/track.png" alt="">
       <div>轨迹</div>
     </navigator>
   </div>
@@ -51,10 +51,10 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  img {
-    &.setting { width: 41rpx; height: 42rpx; }
-    &.pos { width: 116rpx; height: 116rpx; }
-    &.track { width: 41rpx; height: 39rpx; }
+  .img {
+    &_setting { width: 41rpx; height: 42rpx; }
+    &_pos { width: 116rpx; height: 116rpx; }
+    &_track { width: 41rpx; height: 39rpx; }
   }
 }
 </style>

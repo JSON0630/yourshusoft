@@ -1,8 +1,11 @@
 <template>
   <div class="PopAddress">
+    <div class="location">
+      <img class="img_location" src="/static/resources/home/location.png" alt="">
+    </div>
     <div class="address">
       <div class="flex-1">广东省深圳市南山区西丽湖路4065号(西丽湖东</div>
-      <img class="daohang" src="/static/resources/home/daohang.png" alt="">
+      <img class="img_daohang" src="/static/resources/home/daohang.png" alt="">
     </div>
     <div class="more_info" :class="{show: showMore}">
       <div class="flex">
@@ -33,7 +36,7 @@
       </div>
     </div>
     <div class="more" @click="showMore=!showMore">
-      <img class="zhankai" src="/static/resources/home/zhankai.png" alt="">
+      <img class="img_zhankai" src="/static/resources/home/zhankai.png" alt="">
       <div>{{ showMore ? '收起信息' : '展开更多' }}</div>
     </div>
   </div>
@@ -73,6 +76,19 @@ export default {
     border-style: solid;
     border-color: rgba(255, 255, 255, .9) transparent transparent;
   }
+  .location {
+    position: absolute;
+    right: 0;
+    top: -100rpx;
+    width: 85rpx;
+    height: 84rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 6rpx #ccc;
+    border-radius: 50%;
+    background: #fff;
+  }
   .address {
     display: flex;
     align-items: center;
@@ -105,9 +121,10 @@ export default {
     width: 100%;
     margin-top: 12rpx;
   }
-  img {
-    &.daohang { width: 110rpx; height: 47rpx; margin-left: 30rpx; }
-    &.zhankai { width: 18rpx; height: 18rpx; margin-right: 17rpx; }
+  .img {
+    &_daohang { width: 110rpx; height: 47rpx; margin-left: 30rpx; }
+    &_zhankai { width: 18rpx; height: 18rpx; margin-right: 17rpx; }
+    &_location { width: 46rpx; height: 45rpx; }
   }
 }
 </style>

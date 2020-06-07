@@ -1,12 +1,12 @@
 <template>
   <div class="Message" :class="{close: !hasNewMsg}">
     <div class="long" v-if="hasNewMsg">
-      <img class="message" src="/static/resources/home/message.png" alt="">
+      <img class="img_message" src="/static/resources/home/message.png" alt="">
       <div class="flex-1">您有1条未读消息</div>
-      <img class="close" src="/static/resources/home/close.png" @click="$emit('close')">
+      <img class="img_close" src="/static/resources/home/close.png" @click="$emit('close')">
     </div>
     <div class="short" v-else>
-      <img class="message" src="/static/resources/home/message.png" alt="">
+      <img class="img_message" src="/static/resources/home/message.png" alt="">
       <div>消息</div>
     </div>
   </div>
@@ -55,9 +55,9 @@ export default {
       margin: 0;
     }
   }
-  img {
-    &.message { width: 29rpx; height: 28rpx; margin-left: 35rpx; margin-right: 32rpx; }
-    &.close { width: 36rpx; height: 37rpx; margin-right: 20rpx; }
+  .img {
+    &_message { width: 29rpx; height: 28rpx; margin-left: 35rpx; margin-right: 32rpx; }
+    &_close { width: 36rpx; height: 37rpx; margin-right: 20rpx; }
   }
 }
 </style>
