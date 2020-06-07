@@ -1,13 +1,13 @@
 <template>
-  <div class="Message" :class="{close: !hasNewMsg}">
-    <div class="long" v-if="hasNewMsg">
-      <img class="img_message" src="/static/resources/home/message.png" alt="">
-      <div class="flex-1">您有1条未读消息</div>
-      <img class="img_close" src="/static/resources/home/close.png" @click="$emit('close')">
-    </div>
-    <div class="short" v-else>
+  <div class="Message" :class="{close}">
+    <div class="short" v-if="close">
       <img class="img_message" src="/static/resources/home/message.png" alt="">
       <div>消息</div>
+    </div>
+    <div class="long" v-else>
+      <img class="img_message" src="/static/resources/home/message.png" alt="">
+      <div class="flex-1">您有{{unreadCount}}条未读消息</div>
+      <img class="img_close" src="/static/resources/home/close.png" @click="$emit('close')">
     </div>
   </div>
 </template>
@@ -15,7 +15,12 @@
 <script>
 export default {
   props: {
-    hasNewMsg: Boolean
+    unreadCount: Number
+  },
+  computed: {
+    close () {
+      return this.unreadCount === 0
+    }
   }
 }
 </script>
@@ -47,16 +52,17 @@ export default {
     display: flex;
     align-items: center;
     width: 100%;
+    .img_message {
+      margin-left: 35rpx;
+      margin-right: 32rpx;
+    }
   }
   .short {
     text-align: center;
     padding: 12rpx 16rpx 8rpx;
-    img.message {
-      margin: 0;
-    }
   }
   .img {
-    &_message { width: 29rpx; height: 28rpx; margin-left: 35rpx; margin-right: 32rpx; }
+    &_message { width: 29rpx; height: 28rpx; }
     &_close { width: 36rpx; height: 37rpx; margin-right: 20rpx; }
   }
 }

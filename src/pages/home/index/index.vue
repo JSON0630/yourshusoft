@@ -1,8 +1,8 @@
 <template>
   <div class="HomeIndex">
     <TopSearch />
-    <Message :hasNewMsg="hasNewMsg" @close="hasNewMsg=false"/>
-    <MapChoose :hasNewMsg="!hasNewMsg" :mapType="mapType" @change="handleMapTypeChange"/>
+    <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
+    <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
     <PopAddress />
     <PosBottom />
     <map
@@ -39,7 +39,7 @@ export default {
     PosBottom
   },
   data: () => ({
-    hasNewMsg: true,
+    unreadCount: 0,
     mapType: MAP_TYPE.standard,
     markers: [{
       iconPath: "/static/resources/home/question.png",
@@ -79,6 +79,7 @@ export default {
   methods: {
     async noticeUnreadCount () {
       const { success, data } = await this.$http.noticeUnreadCount()
+      console.log(success, data)
       if (success) {
         this.unreadCount = data
       }

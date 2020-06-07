@@ -1,6 +1,6 @@
 <template>
   <block>
-    <div class="MapChoose" :class="{isTop: hasNewMsg}" @click="showDrawer=true">
+    <div class="MapChoose" :class="{isTop}" @click="showDrawer=true">
       <img class="img_map" src="/static/resources/home/map.png" alt="">
       <div>地图</div>
     </div>
@@ -28,7 +28,7 @@ import { MAP_TYPE } from '@/global/constants'
 export default {
   components: { Drawer },
   props: {
-    hasNewMsg: Boolean,
+    isTop: Boolean,
     mapType: String
   },
   data: () => ({
@@ -36,7 +36,6 @@ export default {
   }),
   computed: {
     mapTypes () {
-      console.log(Object.entries(MAP_TYPE).map(([type, label]) => ({type, label})))
       return Object.entries(MAP_TYPE).map(([type, label]) => ({type, label}))
     }
   }
