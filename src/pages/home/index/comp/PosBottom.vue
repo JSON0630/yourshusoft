@@ -1,16 +1,16 @@
 <template>
   <div class="PosBottom">
-    <div class="bottom_item">
+    <navigator url="/pages/setting/device/setting/main" class="bottom_item">
       <img class="setting" src="/static/resources/home/setting.png" alt="">
       <div>设置</div>
-    </div>
+    </navigator>
     <div class="pos_wrap">
       <img class="pos" src="/static/resources/home/pos.png" alt="">
     </div>
-    <div class="bottom_item">
+    <navigator url="/pages/home/track/main" class="bottom_item">
       <img class="track" src="/static/resources/home/track.png" alt="">
       <div>轨迹</div>
-    </div>
+    </navigator>
   </div>
 </template>
 

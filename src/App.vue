@@ -25,7 +25,7 @@ div {
 }
 .flex { display: flex; }
 .flex-1 { flex: 1 }
-
+navigator { display: flex; }
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s
 }
