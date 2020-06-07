@@ -2,7 +2,7 @@
 
 >使用mpvue通过usingComponents导入[iview-weapp](https://github.com/TalkingData/iview-weapp)
 
-## 预览ddddddd
+## 预览
 
 ``` bash
 1. git clone
