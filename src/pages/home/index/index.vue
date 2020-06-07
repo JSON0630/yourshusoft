@@ -29,6 +29,7 @@ import MapChoose from './comp/MapChoose'
 import PopAddress from './comp/PopAddress'
 import PosBottom from './comp/PosBottom'
 import { MAP_TYPE } from '@/global/constants'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -73,6 +74,9 @@ export default {
       clickable: true
     }]
   }),
+  computed: {
+    ...mapState(['token'])
+  },
   mounted () {
     this.noticeUnreadCount()
   },

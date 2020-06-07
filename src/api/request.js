@@ -1,19 +1,18 @@
+import store from '@/store'
+
 const host = 'https://api.youshusoft.com'
 const context = '/gpsserver/api'
 
 export default {
   post: (url, data) => new Promise(function (resolve, reject) {
-    console.log('---enter---')
     wx.request({
-      url: host + context + url,
       method: 'POST',
+      url: host + context + url,
       data,
       header: {
-        'content-type': 'application/x-www-form-urlencoded', // 默认值
-        // 自定义请求头
-        // 'access-token': app.globalData.access_token, // 访问令牌
-        // 'user-token': app.globalData.user_token, // 登录令牌
-        'version': 'v1.0' // 版本号
+        // 'content-type': 'application/x-www-form-urlencoded',
+        'token': store.getters.token,
+        'version': 'v1.0'
       },
       success: function (res) {
         console.log('---success---')
@@ -26,7 +25,6 @@ export default {
       },
       fail: function (res) {
         console.log('---fail---')
-        // fail调用接口失败
         reject({ error: '网络错误', code: 0 });
       },
       complete: function (res) {
