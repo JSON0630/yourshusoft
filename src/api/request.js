@@ -19,6 +19,7 @@ export default {
           reject({ error: '服务器忙，请稍后重试', code: 500 });
           return;
         }
+        res.data.success = res.data.code === 0
         resolve(res.data);
       },
       fail: function (res) {

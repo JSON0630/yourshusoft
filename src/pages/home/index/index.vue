@@ -73,7 +73,16 @@ export default {
       clickable: true
     }]
   }),
+  mounted () {
+    this.noticeUnreadCount()
+  },
   methods: {
+    async noticeUnreadCount () {
+      const { success, data } = await this.$http.noticeUnreadCount()
+      if (success) {
+        this.unreadCount = data
+      }
+    },
     handleMapTypeChange (type) {
       this.mapType = type
     },
