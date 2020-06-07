@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/setting/device/edit/main",
     "pages/setting/device/setting/main",
     "pages/login/account/main",
     "pages/home/index/main",
@@ -7,7 +8,6 @@
     "pages/login/phone/main",
     "pages/setting/index/main",
     "pages/setting/edition/main",
-    "pages/setting/device/edit/main",
     "pages/setting/device/manage/main",
     "pages/setting/device/renew/main"
   ],
