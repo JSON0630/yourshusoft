@@ -136,7 +136,6 @@
     position: relative;
     border: 1px solid #eee;
     text-align: center;
-    box-sizing: border-box;
   }
 
   .title {

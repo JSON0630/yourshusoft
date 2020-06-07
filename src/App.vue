@@ -11,7 +11,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang=less>
+div {
+  box-sizing: border-box;
+}
 .container {
   height: 100%;
   display: flex;
@@ -19,13 +22,17 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 200rpx 0;
-  box-sizing: border-box;
 }
-/* this rule will be remove */
-* {
-  transition: width 2s;
-  -moz-transition: width 2s;
-  -webkit-transition: width 2s;
-  -o-transition: width 2s;
+.flex { display: flex; }
+.flex-1 { flex: 1 }
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+.mt {
+  &-8 { margin-top: 8rpx; }
 }
 </style>
