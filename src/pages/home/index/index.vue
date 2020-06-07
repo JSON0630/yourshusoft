@@ -79,7 +79,6 @@ export default {
   methods: {
     async noticeUnreadCount () {
       const { success, data } = await this.$http.noticeUnreadCount()
-      console.log(success, data)
       if (success) {
         this.unreadCount = data
       }
