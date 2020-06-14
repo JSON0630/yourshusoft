@@ -58,15 +58,15 @@ export default {
   },
   mounted () {
     map = wx.createMapContext('map')
-    this.deviceListSimple()
+    this.getDeviceList()
     this.noticeUnreadCount()
   },
   methods: {
     ...mapMutations(['update']),
-    async deviceListSimple () {
-      const { success, data } = await this.$http.deviceListSimple()
+    async getDeviceList () {
+      const { success, data } = await this.$http.deviceList({type: 0})
       if (success && data.length) {
-        this.deviceList = data
+        this.deviceList = data.dataList
         this.handeDeviceChange(data[0])
       }
     },
@@ -79,8 +79,9 @@ export default {
       if (success) { this.device.detail = data }
     },
     async deviceRefreshGps (imei) {
-      const { success, data } = await this.$http.deviceRefreshGps({imei})
-      if (success) { this.device.pos = data }
+      const { success, data, msg } = await this.$http.deviceRefreshGps({imei})
+      if (!success) return wx.showToast({ title: msg, icon: 'none' })
+      this.device.pos = data
     },
     async handleSearch (search) {
       const { success, data } = await this.$http.deviceSearch({imei: search, val: 1})
