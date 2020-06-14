@@ -1,5 +1,3 @@
-import store from '@/store'
-
 const host = 'https://api.youshusoft.com'
 const context = '/gpsserver/api'
 
@@ -10,21 +8,23 @@ export default {
       url: host + context + url,
       data,
       header: {
-        // 'content-type': 'application/x-www-form-urlencoded',
-        'token': store.getters.token,
+        'token': wx.getStorageSync('TOKEN'),
         'version': 'v1.0'
       },
       success: function (res) {
-        console.log('---success---')
         if (res.statusCode != 200) {
           reject({ error: '服务器忙，请稍后重试', code: 500 });
           return;
         }
-        res.data.success = res.data.code === 0
+        const { code, msg } = res.data
+        if ([-100, -101].includes(code)) {
+          wx.showToast({ title: msg, icon: 'none' })
+          return wx.reLaunch({url: '/pages/login/phone/main'})
+        }
+        res.data.success = code === 0
         resolve(res.data);
       },
       fail: function (res) {
-        console.log('---fail---')
         reject({ error: '网络错误', code: 0 });
       },
       complete: function (res) {

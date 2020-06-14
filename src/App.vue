@@ -25,6 +25,15 @@ div {
 }
 .flex { display: flex; }
 .flex-1 { flex: 1 }
+.flex-align-center {
+  display: flex;
+  align-items: center;
+}
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 navigator { display: flex; }
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s

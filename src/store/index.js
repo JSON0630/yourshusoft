@@ -1,14 +1,26 @@
-import Vue from 'vue';
+import Vue from 'vue'
 import Vuex from 'vuex'
+import { deepCopy } from '@/utils'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   getters: {
-    token: state => state.token
+    userInfo: state => state.userInfo
   },
   state: {
-    token: ''
+    userInfo: {
+      token: '',
+      type: 0,
+      userId: '',
+      userName: '',
+      avatarUrl: '/static/resources/login/user.png'
+    },
+    deviceInfo: {
+      imei: '',
+      lng: '113.3245211',
+      lat: '23.10229'
+    }
   },
   mutations: {
     /**
@@ -21,9 +33,7 @@ const store = new Vuex.Store({
      * @param {*Object} config 
      */
     update(state, config) {
-      Object.keys(config).map((item, key) => {
-        state[item] = config[item]
-      })
+      deepCopy(state, config)
     }
   }
 })

@@ -6,60 +6,76 @@
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
+        <div class="name ellipsis">{{ currentDevice.name }}</div>
         <img class="img_arrow_down" src="/static/resources/home/arrow_down.png" alt="">
       </div>
       <img class="img_question" src="/static/resources/home/question.png" alt="">
       <img class="img_scan" src="/static/resources/home/scan.png" alt="">
     </div>
     <div class="TopSearch" v-else>
-      <input class="flex-1" type="text" placeholder="请输入设备名称或imei号">
+      <input v-model="search" @input="handleInput" class="flex-1" type="text" placeholder="请输入设备名称或imei号">
       <div class="cancel" @click="showSelect=false">取消</div>
     </div>
     <div class="DeviceList" :class="{open: showSelect}">
-      <div class="item" v-for="(x, i) in deviceList" :key="i">
-        <div class="left"></div>
-        <div class="right"></div>
+      <div class="item"
+        v-for="(x, i) in deviceList"
+        :key="i"
+        @click="onDeviceChange(x)"
+        :class="{active: currentDevice.imei === x.imei}"
+      >
+        <div class="flex-align-center">
+          <img class="img_device" :src="x.avatar" alt="">
+          <div class="name">{{ x.name }}</div>
+        </div>
+        <div class="radius" :class="{online: x.online}"></div>
       </div>
     </div>
   </block>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { debounce } from '@/utils'
+
 export default {
+  props: {
+    currentDevice: Object,
+    deviceList: Array
+  },
   data: () => ({
-    userInfo: {},
-    showSelect: false,
-    deviceList: []
+    search: '',
+    showSelect: false
   }),
-  mounted () {
-    this.init()
+  computed: {
+    ...mapState(['userInfo'])
+  },
+  watch: {
+    'currentDevice.name' (name) {
+      this.search = name
+    }
   },
   methods: {
-    init () {
-      // 登录
-      wx.login({
-        success: res => {
-          // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        }
-      })
-      // 获取用户信息
-      wx.getSetting({
-        success: res => {
-          if (res.authSetting['scope.userInfo']) {
-            wx.getUserInfo({
-              success: res => {
-                this.userInfo = res.userInfo
-              }
-            })
-          }
-        }
-      })
-    }
+    onDeviceChange (device) {
+      this.$emit('deviceChange', device)
+      setTimeout(() => {
+        this.showSelect = false
+      }, 300)
+    },
+    handleInput: debounce(function (e){
+      this.$emit('search', this.search)
+    }, 600)
   }
 }
 </script>
 
 <style lang="less">
+.img {
+  &_avatar { width: 60rpx; height: 60rpx; border-radius: 50%; }
+  &_device { width: 60rpx; height: 60rpx; border-radius: 50%; margin-right: 10rpx; }
+  &_arrow_down { width: 17rpx; height: 12rpx; }
+  &_question { width: 34rpx; height: 34rpx; margin-left: 40rpx; }
+  &_scan { width: 32rpx; height: 32rpx; margin-left: 30rpx; }
+}
 .TopSearch {
   width: 720rpx;
   height: 7.2vh;
@@ -79,6 +95,11 @@ export default {
     flex: 1;
     color: #666;
     justify-content: space-between;
+    .name {
+      flex: 1;
+      padding-left: 10rpx;
+      max-width: 400rpx;
+    }
   }
   input::placeholder {
     color: #999;
@@ -90,12 +111,6 @@ export default {
     height: 7.2vh;
     line-height: 7.2vh;
     padding: 0 30rpx;
-  }
-  .img {
-    &_avatar { width: 60rpx; height: 60rpx; border-radius: 50%; }
-    &_arrow_down { width: 17rpx; height: 12rpx; }
-    &_question { width: 34rpx; height: 34rpx; margin-left: 40rpx; }
-    &_scan { width: 32rpx; height: 32rpx; margin-left: 30rpx; }
   }
 }
 .DeviceList {
@@ -113,6 +128,29 @@ export default {
   transition: height .3s ease;
   &.open {
     height: 87vh;
+  }
+  .item {
+    height: 88rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 26rpx;
+    transition: background .3s ease;
+    &.active {
+      background: rgb(193, 239, 247);
+    }
+    &+& {
+      border-top: 1rpx solid #ccc;
+    }
+    .radius {
+      width: 20rpx;
+      height: 20rpx;
+      border-radius: 50%;
+      background: gray;
+      &.online {
+        background: green;
+      }
+    }
   }
 }
 </style>

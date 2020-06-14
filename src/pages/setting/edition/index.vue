@@ -8,7 +8,7 @@
     <div class="new_banben">
       <span>当前版本</span>
       <img class="arr_right" src="/static/resources/arr_right.png"> 
-       <span>已是最新版本</span>
+       <span class="xin">已是最新版本</span>
     </div>
     <div class="new_banben">
       <span>官网</span>
@@ -19,6 +19,16 @@
 
 <script>
   export default {
+     data: () => ({
+      messageList: [1,2,3,4,5,6],
+      'imei':'353520171025838',
+      count: 1
+    }),
+    mounted(){
+    },
+    methods:{
+
+    }
   };
 </script>
 
@@ -48,17 +58,12 @@
     background: #fff;
     padding:0 35rpx;
     border-bottom: 1rpx solid  #F6F6F6;
-    span{
-
-      &:nth-child(2){
-        float: right;
-        color: #A2A6B7;
-        font-size: 20rpx;
-        margin-right: 20rpx;
-      }
+    .xin{
+      float: right;
+      color: #A2A6B7;
+      font-size: 20rpx;
+      margin-right: 20rpx;
     }
-   
-
   }
   .arr_right{
     float: right;

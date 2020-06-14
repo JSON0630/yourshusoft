@@ -1,16 +1,16 @@
 <template>
   <div class="PopAddress">
-    <div class="location">
+    <div class="location" @click="$emit('onPos')">
       <img class="img_location" src="/static/resources/home/location.png" alt="">
     </div>
     <div class="address">
       <div class="flex-1">广东省深圳市南山区西丽湖路4065号(西丽湖东</div>
-      <img class="img_daohang" src="/static/resources/home/daohang.png" alt="">
+      <img class="img_daohang" src="/static/resources/home/daohang.png" @click="$emit('daohang')">
     </div>
     <div class="more_info" :class="{show: showMore}">
       <div class="flex">
         <div class="info_item">
-          <div>时间：2020-05-27 23:23:11</div>
+          <div>时间：{{ detail.createTime }}</div>
           <div>通讯：11</div>
         </div>
         <div>
@@ -43,10 +43,23 @@
 </template>
 
 <script>
+import { formatTime } from '@/utils'
+
 export default {
+  props: {
+    device: Object
+  },
   data: () => ({
     showMore: false
-  })
+  }),
+  computed: {
+    detail() {
+      return {
+        ...this.device, 
+        createTime: formatTime(this.device.createTime, 'yyyy-MM-dd hh:mm:ss')
+      }
+    }
+  }
 }
 </script>
 

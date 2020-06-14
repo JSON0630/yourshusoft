@@ -1,7 +1,7 @@
 <template>
   <div class="Drawer">
     <div class="Drawer_layer" :class="{open: value}" @click="$emit('input', false)"></div>
-    <div class="Drawer_content" :class="{open: value}">
+    <div class="Drawer_content" :class="[from, {open: value}]">
       <slot />
     </div>
   </div>
@@ -10,7 +10,11 @@
 <script>
 export default {
   props: {
-    value: Boolean
+    value: Boolean,
+    from: {
+      type: String,
+      default: 'right'
+    }
   }
 }
 </script>
@@ -32,16 +36,27 @@ export default {
   }
   &_content {
     position: fixed;
-    right: 0;
-    top: 0;
     z-index: 4;
-    height: 100vh;
-    transform: translateX(100%);
-    transform-origin: right;
     transition: all .3s ease;
     background: #fff;
-    &.open {
-      transform: translateX(0);
+    &.right {
+      top: 0;
+      right: 0;
+      height: 100vh;
+      transform: translateX(100%);
+      transform-origin: right;
+      &.open {
+        transform: translateX(0);
+      }
+    }
+    &.bottom {
+      bottom: 0;
+      width: 100vw;
+      transform: translateY(100%);
+      transform-origin: bottom;
+      &.open {
+        transform: translateY(0);
+      }
     }
   }
 }

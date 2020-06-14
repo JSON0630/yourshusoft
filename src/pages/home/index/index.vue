@@ -1,21 +1,21 @@
 <template>
   <div class="HomeIndex">
-    <TopSearch />
+    <TopSearch
+      :deviceList="deviceList"
+      :currentDevice="device.current"
+      @deviceChange="handeDeviceChange"
+      @search="handleSearch"
+    />
     <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
     <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
-    <PopAddress />
+    <PopAddress :device="device.detail" @onPos="handlePos" @daohang="handleDaohang"/>
     <PosBottom />
     <map
       id="map"
-      longitude="113.324520"
-      latitude="23.099994"
-      cale="14"
-      :controls="controls"
-      bindcontroltap="controltap"
-      :markers="markers"
-      bindmarkertap="markertap"
-      :polyline="polyline"
-      bindregionchange="regionchange"
+      :enable-satellite="mapType===MAP_TYPE.satellite"
+      :longitude="device.pos.lng"
+      :latitude="device.pos.lat"
+      scale="100"
       show-location
       style="width: 100%; height: 100vh;"
     />
@@ -23,14 +23,15 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import TopSearch from './comp/TopSearch'
 import Message from './comp/Message'
 import MapChoose from './comp/MapChoose'
 import PopAddress from './comp/PopAddress'
 import PosBottom from './comp/PosBottom'
 import { MAP_TYPE } from '@/global/constants'
-import { mapState } from 'vuex'
 
+let map = null
 export default {
   components: {
     TopSearch,
@@ -40,64 +41,85 @@ export default {
     PosBottom
   },
   data: () => ({
-    unreadCount: 0,
-    mapType: MAP_TYPE.standard,
-    markers: [{
-      iconPath: "/static/resources/home/question.png",
-      id: 0,
-      latitude: 23.099994,
-      longitude: 113.324520,
-      width: 50,
-      height: 50
-    }],
-    polyline: [{
-      points: [{
-        longitude: 113.3245211,
-        latitude: 23.10229
-      }, {
-        longitude: 113.324520,
-        latitude: 23.21229
-      }],
-      color:"#FF0000DD",
-      width: 2,
-      dottedLine: true
-    }],
-    controls: [{
-      id: 1,
-      iconPath: '/static/resources/home/pos.png',
-      position: {
-        left: 0,
-        top: 300 - 50,
-        width: 50,
-        height: 50
+    device: {
+      current: {},
+      pos: {
+        lng: '113.324520',
+        lat: '23.099994'
       },
-      clickable: true
-    }]
+      detail: {}
+    },
+    deviceList: [],
+    unreadCount: 0,
+    mapType: MAP_TYPE.standard
   }),
   computed: {
-    ...mapState(['token'])
+    MAP_TYPE () { return MAP_TYPE }
   },
   mounted () {
+    map = wx.createMapContext('map')
+    this.deviceListSimple()
     this.noticeUnreadCount()
   },
   methods: {
+    ...mapMutations(['update']),
+    async deviceListSimple () {
+      const { success, data } = await this.$http.deviceListSimple()
+      if (success && data.length) {
+        this.deviceList = data
+        this.handeDeviceChange(data[0])
+      }
+    },
     async noticeUnreadCount () {
       const { success, data } = await this.$http.noticeUnreadCount()
-      if (success) {
-        this.unreadCount = data
-      }
+      if (success) { this.unreadCount = data }
+    },
+    async deviceGet (imei) {
+      const { success, data } = await this.$http.deviceGet({imei})
+      if (success) { this.device.detail = data }
+    },
+    async deviceRefreshGps (imei) {
+      const { success, data } = await this.$http.deviceRefreshGps({imei})
+      if (success) { this.device.pos = data }
+    },
+    async handleSearch (search) {
+      const { success, data } = await this.$http.deviceSearch({imei: search, val: 1})
+      if (success) { this.deviceList = data }
+    },
+    handeDeviceChange (device) {
+      this.device.current = device
+      this.deviceRefreshGps(device.imei)
+      this.deviceGet(device.imei)
+      this.update({deviceInfo: {imei: device.imei, ...this.device.pos}})
+    },
+    handlePos () {
+      const { lng, lat } = this.device.pos
+      map.moveToLocation({
+        longitude: lng,
+        latitude: lat,
+        success: () => {
+          console.log('-----success===')
+        },
+        fail: () => {
+          console.log('------fail====')
+        }
+      })
+    },
+    handleDaohang () {
+      wx.getLocation({
+        type: 'wgs84', // 返回可以用于wx.openLocation的经纬度，官方提示bug: iOS 6.3.30 type 参数不生效，只会返回 wgs84 类型的坐标信息  
+        success: function (res) {
+          wx.openLocation({
+            latitude: 22.5542080000,
+            longitude: 113.8878770000,
+            name: "宝安中心A地铁口xxxxx",
+            address:'宝安中心A地铁口xxxxx'
+          })
+        }
+      })
     },
     handleMapTypeChange (type) {
       this.mapType = type
-    },
-    regionchange(e) {
-      console.log(e.type)
-    },
-    markertap(e) {
-      console.log(e.detail.markerId)
-    },
-    controltap(e) {
-      console.log(e.detail.controlId)
     }
   }
 };
