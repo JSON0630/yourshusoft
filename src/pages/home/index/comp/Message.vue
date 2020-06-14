@@ -1,12 +1,12 @@
 <template>
   <div class="Message" :class="{close}">
-    <div class="short" v-if="close">
+    <div class="short" v-if="close" @click="goMsg">
       <img class="img_message" src="/static/resources/home/message.png" alt="">
       <div>消息</div>
     </div>
     <div class="long" v-else>
-      <img class="img_message" src="/static/resources/home/message.png" alt="">
-      <div class="flex-1">您有{{unreadCount}}条未读消息</div>
+      <img class="img_message" src="/static/resources/home/message.png" @click="goMsg">
+      <div class="flex-1" @click="goMsg">您有{{unreadCount}}条未读消息</div>
       <img class="img_close" src="/static/resources/home/close.png" @click="$emit('close')">
     </div>
   </div>
@@ -20,6 +20,11 @@ export default {
   computed: {
     close () {
       return this.unreadCount === 0
+    }
+  },
+  methods: {
+    goMsg () {
+      wx.navigateTo({url: '/pages/home/message/main'})
     }
   }
 }
