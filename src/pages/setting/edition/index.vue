@@ -6,7 +6,7 @@
        <div class="edit_banben">V 0.0.0</div>
     </div>
     <div class="new_banben">
-      <span>当前版本</span>
+      <span>当前版2本</span>
       <img class="arr_right" src="/static/resources/arr_right.png"> 
        <span class="xin">已是最新版本</span>
     </div>
