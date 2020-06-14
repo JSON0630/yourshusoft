@@ -1,41 +1,30 @@
 <template>
   <div class="device_renew">
-    <!-- <i-tabs class="device_tab"  current="0" color="#f759ab" bindchange="handleChange">
-     <i-tab key="tab1" title="设备续费"></i-tab>
-     <i-tab key="tab2" title="短信充值"></i-tab>
-   </i-tabs> -->
     <div class="device_tab">
-      <span v-for="(x,key) in renewList" :key=<i class="el el-return-key"></i> :class="key == 1?'device_checked':''">{{x}}</span>
+      <span @click="changeType(x)" v-for="(x,key) in renewList" :key=key :class="type == x.type?'device_checked':''">{{x.name}}</span>
     </div>
     <div class="device_info">
       <div>
-        <p>猫（2051-06-25到期）</p>
-        <p>IMEI:363620181216205</p>
+        <p>{{info.babyName}}（{{info.effectiveTimeStr}}到期）</p>
+        <p>IMEI:{{info.imei}}</p>
       </div>
       <div class="person_box">
-        <img class="person_img" src="/static/resources/setting/person.png"/>
+        <img class="person_img" 
+        :src="info.babyAvatar?info.babyAvatar:'/static/resources/setting/person.png'"/>
         <!-- <img class="arr_right" src="/static/resources/arr_right.png"/> -->
       </div>
     </div>
     <div class="device_chongzhi">
       <p class="chongzhi_text">充值</p>
       <div class="chongzhi_price">
-        <span>
+        <span v-for="(x,key) in list1" :key=key @click="checkPrice(x)" :class="x.id== id?'chongzhi_price_checked':''">
+          <p>{{x.name}}</p>
+          <p>{{x.priceName}}</p>
+        </span>
+        <!-- <span class="chongzhi_price_checked">
           <p>200M</p>
           <p>8元</p>
-        </span>
-        <span class="chongzhi_price_checked">
-          <p>200M</p>
-          <p>8元</p>
-        </span>
-        <span>
-          <p>200M</p>
-          <p>8元</p>
-        </span>
-        <span>
-          <p>200M</p>
-          <p>8元</p>
-        </span>
+        </span> -->
       </div>
     </div>
     <div class="device_wechat">
@@ -52,25 +41,62 @@
 </template>
 
 <script>
-    export default {
-        data () {
-            return {
-                renewList: ['设备续费','短信充值'],
-                current: 3,
-                animal: '微信',
-                disabled: false,
-                loading: false
-            }
-        },
-        methods: {
-            handleChange(){
+export default {
+  data () {
+    return {
+      renewList: [{name:'设备续费',type:1},{name:'短信充值',type:2}],
+      list:[],
+      list1:[],
+      type: 1,
+      id: '',
+      imei:'',
+      info: {},
+      animal: '微信',
+      disabled: false,
+      loading: false
+    }
+  },
+  mounted(){
+    console.log(this.$store.state.deviceInfo.imei)
+    this.getPayList();
+    this.getDeviceInfo();
+  },
+  onLoad (options) {
+    this.imei = options.imei
+  },
+  methods: {
+    async getDeviceInfo(){
+      let result = await this.$http.deviceGet({'imei':this.imei })
+      if(result && result.data){
+        this.info = result.data
+      }
+    },
+    async getPayList(){
+      let result = await this.$http.payRechargeList()
+      if(result && result.data){
+        this.list = result.data;
+        this.list1 = this.list.filter((item)=>{
+          return item.type == this.type
+        })
+        this.id = this.list1[0].id
+        console.log(this.list,this.list1)
+      }
+    },
+    changeType(x){
+      this.type = x.type
+      this.list1 = this.list.filter((item)=>{
+        return item.type == this.type
+      })
+      this.id = this.list1[0].id
+    },
+    handleChange(){
 
-            },
-            handleAnimalChange(){
+    },
+    handleAnimalChange(){
 
-            }
-        }
-    };
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -83,7 +109,7 @@
     width: 100%;
     .device_tab{
       background: #fff;
-      height: 90rpx;
+      height: 130rpx;
       line-height: 90rpx;
       text-align: center;
       color: #000;
@@ -134,6 +160,7 @@
           text-align: center;
           margin-right: 18rpx;
           color: #4388FF;
+          margin-bottom: 10rpx;
         }
         .chongzhi_price_checked{
           background: #4388FF;

@@ -1,6 +1,6 @@
 <template>
   <div class="Message" :class="{close}">
-    <div class="short" v-if="close">
+    <div class="short" v-if="close" @click="goMessage">
       <img class="img_message" src="/static/resources/home/message.png" alt="">
       <div>消息</div>
     </div>
@@ -20,6 +20,12 @@ export default {
   computed: {
     close () {
       return this.unreadCount === 0
+    }
+  },
+  methods:{
+    goMessage(){
+      wx.navigateTo({url: '/pages/home/message/main'})
+
     }
   }
 }

@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/home/index/main",
+    "pages/home/message/main",
     "pages/home/track/main",
     "pages/home/trackList/main",
     "pages/login/phone/main",

@@ -1,33 +1,53 @@
 <template>
   <div class="message_box">
-    <p @click="screenEvent" class="message_shaixuan">筛选<span></span></p>
+    <p @click="screenEvent" class="message_shaixuan">{{itemList[index]}}<span></span></p>
     <div class="message_List">
-      <div class="message_item" v-for="(x,key) in messageList" :key="key">
-        <img class="person_img" src="/static/resources/setting/person.png"/>
+      <template v-if="list.length>0">
+        <div class="message_item" v-for="(x,key) in list" :key="key">
+        <img class="person_img" :src="x.deviceInfo.avatar?x.deviceInfo.avatar:'/static/resources/setting/person.png'"/>
         <div class="message_item_text">
-          <p>存放 Pro</p>
-          <p>断开充电连接连接</p>
-          <p>充电报警</p>
-          <p>2020-05-20 21:33:26</p>
+          <p>{{x.deviceInfo.name?x.deviceInfo.name:'--'}}</p>
+          <p>{{x.remark?x.remark:'--'}}</p>
+          <p>{{x.eventName?x.eventName:'--'}}</p>
+          <p>{{x.timeStr}}</p>
         </div>
       </div>
-
+      </template>
+      <p  v-else  class="empty" >暂无数据</p>
     </div>
-
+   
   </div>
 </template>
 
 <script>
   export default {
     data: () => ({
-      messageList: [1,2,3,4,5,6]
+      list: [{deviceInfo:{}}],
+      eventId: 0,
+      itemList: ['全部', '围栏', '位移','低电','震动'],
+      index: 0
     }),
+    mounted(){
+     this.getMessageList();
+    },
     methods:{
+      async getMessageList(){
+        let result = await this.$http.noticeList({eventId:this.eventId })
+        if(result && result.data){
+            this.list = result.data;
+        }
+      },
       screenEvent(){
+        const that = this
         wx.showActionSheet({
-          itemList: ['A', 'B', 'C'],
+          itemList: ['全部', '围栏', '位移','低电','震动'],
           success (res) {
             console.log(res.tapIndex)
+            that.index = res.tapIndex
+            const arr_item = [0,43,42,41,40];
+            that.eventId = arr_item[res.tapIndex]
+            console.log(that.eventId)
+            that.getMessageList()
           },
           fail (res) {
             console.log(res.errMsg)
@@ -43,7 +63,7 @@
     position: relative;
     background: #F6F6F6;
     height: 100%;
-    padding: 20rpx 0rpx;
+    padding: 0rpx 0rpx;
     .message_shaixuan{
       position: fixed;
       background: #fff;
@@ -56,11 +76,15 @@
       top: 0;
       left: 0;
       span{
+        position: absolute;
+        top: 50%;
+        left: 55%;
+        margin-top: -7rpx;
         width: 0;
         height: 0;
-        border-left: 25rpx solid transparent;
-        border-right: 25rpx solid transparent;
-        border-top: 25rpx solid #4EB9FF;
+        border-left: 15rpx solid transparent;
+        border-right: 15rpx solid transparent;
+        border-top: 15rpx solid #4EB9FF;
         vertical-align: bottom;
       }
     }
@@ -93,6 +117,13 @@
           }
         }
       }
+    }
+    .empty{
+      font-size:24rpx;
+      padding-top:200rpx;
+      text-align:center;
+      color:#808080;
+      background:#fff;
     }
     .person_img{
       height: 120rpx;

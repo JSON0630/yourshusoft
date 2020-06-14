@@ -3,7 +3,7 @@
     <div class="person_img" @click="goDeviceInfo">
       <!-- <img  class="person" src="/static/resources/setting/person.png"/> -->
       <img class="person" :src="deviceInfo.babyAvatar?deviceInfo.babyAvatar:'/static/resources/setting/person.png'" />
-      <div class="account" >{{deviceInfo.babyName}}</div>
+      <div class="account" >{{deviceInfo.babyName?deviceInfo.babyName:'--'}}</div>
       <div class="current_shebei">当前设备<span>{{deviceInfo.area? deviceInfo.area:'--'}}</span></div>
     </div>
     <div class="setting_item" @click="onDeviceList">
@@ -13,9 +13,9 @@
     </div>
     <div class="setting_item" @click="onChangeEdition">
       <span><img class="banben_img"  src="/static/resources/setting/banben.png"/></span>
-      <div class="device_text">当前版本</div>
+      <div class="device_text">官网</div>
       <img class="arr_right"  src="/static/resources/arr_right.png"/>
-      <span class="banben">0.0.0</span>
+      <!-- <span class="banben">0.0.0</span> -->
     </div>
     <div class="btn_box exit_btn" @click="exit">
       <button type="" :disabled="disabled" :loading=disabled hover-class=“button-hover”>退出登录</button>
@@ -24,69 +24,70 @@
 </template>
 
 <script>
-    export default {
-        data: () => ({
-            // keys: {
-            //   loginName: '12345678901',
-            //   password: '1234'
-            // }
-            'imei': '353520171025838',
-            deviceInfo: {},
-            disabled: false
-        }),
-        mounted(){
-            this.getDeviceInfo();
-        },
-        methods: {
-            async getDeviceInfo(){
-                let result = await this.$http.deviceGet({'imei':this.imei })
-                if(result && result.data){
-                    this.deviceInfo = result.data;
-                }
-            },
-            //  async getPersonData(){
-            //     const { loginName, password } = this.keys
-            //     let result = await this.$http.userPushTokenUpdate({loginName, password})
-            //     console.log(result)
-            //   },
-            onDeviceList(){
-                wx.navigateTo({url: '/pages/setting/device/manage/main'})
-            },
-            onChangeEdition(){
-                wx.navigateTo({url: '/pages/setting/edition/main'})
-            },
-            goDeviceInfo(){
-                wx.navigateTo({url: '/pages/setting/device/edit/main'})
-            },
-            exit(){
-                wx.showModal({
-                    title: '',
-                    content: '请确认是否退出登录？',
-                    success : (res) =>  {
-                        if(res.confirm) {
-                            console.log('用户点击确定')
-                            this.logOut()
-                        } else if (res.cancel) {
-                            console.log('用户点击取消')
-                        }
-                    }
-                })
-            },
-            async logOut(){
-                this.disabled =true
-                let result = await this.$http.userLogout()
-                console.log(result)
-                if(result.code == 0){
-                    this.disabled = false
-                    wx.navigateTo({url: '/pages/login/phone/index/main'})
-                }else{
-                    setTimeout(function(){
-                        this.disabled = false
-                    },1000)
-                }
-            }
+import { mapMutations } from 'vuex'
+  export default {
+    data: () => ({
+      'imei': '',
+      deviceInfo: {},
+      disabled: false
+    }),
+    mounted(){
+      this.imei =this.$store.state.deviceInfo.imei
+      this.getDeviceInfo();
+    },
+    methods: {
+      ...mapMutations(['update']),
+      async getDeviceInfo(){
+        let result = await this.$http.deviceGet({'imei':this.imei })
+        if(result && result.data){
+            this.deviceInfo = result.data;
         }
+      },
+      onDeviceList(){
+          wx.navigateTo({url: '/pages/setting/device/manage/main'})
+      },
+      onChangeEdition(){
+          wx.navigateTo({url: '/pages/setting/edition/main'})
+      },
+      goDeviceInfo(){
+          wx.navigateTo({url: '/pages/setting/device/edit/main'})
+      },
+      exit(){
+          wx.showModal({
+              title: '',
+              content: '请确认是否退出登录？',
+              success : (res) =>  {
+                  if(res.confirm) {
+                      console.log('用户点击确定')
+                      this.logOut()
+                  } else if (res.cancel) {
+                      console.log('用户点击取消')
+                  }
+              }
+          })
+      },
+      async logOut(){
+          this.disabled =true
+          let result = await this.$http.userLogout()
+          console.log(result)
+          wx.showToast({
+              title: result.msg,
+              icon: 'err',
+              duration: 2000
+          })
+          if(result.code == 0){
+              this.disabled = false
+              wx.redirectTo({url: '/pages/login/phone/main'})
+              this.update({userInfo: {}})
+              wx.setStorageSync('TOKEN', '')
+          }else{
+              setTimeout(function(){
+                  this.disabled = false
+              },1000)
+          }
+      }
     }
+  }
 </script>
 
 <style lang="less" scoped>
@@ -164,6 +165,7 @@
         margin:0;
         border: none;
         border-radius: 10rpx;
+        font-size: 30rpx;
       }
 
 

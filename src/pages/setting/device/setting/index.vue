@@ -60,116 +60,118 @@
 
 <script>
   export default {
-      data () {
-          return {
-              info:{
-                  gpsOn: true,
-                  wifiOn: true,
-                  lbsOn: true,
-              },
-              // checked:false,
-              isTimeShow: false,
-              isPositionShow:false,
-              imei:'359339075602896',
-              items:[
-                  {
-                      label:'10秒（耗电极快）',
-                      value: 10,
-                      checked: true
-                  },
-                  {
-                      label:'1分钟（耗电快）',
-                      value: 60
-                  },
-                  {
-                      label:'5分钟（耗电一般）',
-                      value: 300
-                  },
-                  {
-                      label:'10分钟（省电）',
-                      value: 600
-                  },
-                  {
-                      label:'60分钟（非常省电）',
-                      value: 3600
-                  },
-                  {
-                      label:'120分钟（超级省电）',
-                      value:7200
-                  }
-              ]
+    data () {
+      return {
+        info:{
+          gpsOn: true,
+          wifiOn: true,
+          lbsOn: true,
+        },
+        // checked:false,
+        isTimeShow: false,
+        isPositionShow:false,
+        imei:'',
+        items:[
+          {
+            label:'10秒（耗电极快）',
+            value: 10,
+            checked: true
+          },
+          {
+            label:'1分钟（耗电快）',
+            value: 60
+          },
+          {
+            label:'5分钟（耗电一般）',
+            value: 300
+          },
+          {
+            label:'10分钟（省电）',
+            value: 600
+          },
+          {
+            label:'60分钟（非常省电）',
+            value: 3600
+          },
+          {
+            label:'120分钟（超级省电）',
+            value:7200
           }
-      },
-      mounted(){
-          console.log(this.$router)
-          this.getDeviceInfo();
-      },
-      methods: {
-          async getDeviceInfo(){
-              let result = await this.$http.deviceGet({'imei':this.imei })
-              if(result && result.data){
-                  this.info = result.data;
-                  for(let i =0; i<this.items.length;i++){
-                      if(this.info.refreshTime == this.items[i].value){
-                          this.items[i].checked = true
-                      }
-                  }
-
-              }
-          },
-          switch1Change(e){
-              console.log(e.target.value)
-              this.deviceUpdate({gpsOn: e.target.value})
-          },
-          switch2Change(e){
-              console.log(e.target.value)
-              this.deviceUpdate({wifiOn: e.target.value})
-          },
-          switch3Change(e){
-              console.log(e.target.value)
-              this.deviceUpdate({lbsOn: e.target.value})
-          },
-          async radioChange (e) {
-              console.log('radio发生change事件，携带value值为：', e.target.value)
-              this.deviceUpdate({refreshTime: e.target.value})
-          },
-          async deviceUpdate(data){
-              let result = await this.$http.deviceUpdate({'imei':this.imei, ...data})
-              if(result){
-                  // this.deviceInfo = result.data;
-                  wx.showToast({
-                      title: '设备信息设置成功',
-                      icon: 'success',
-                      duration: 2000
-                  })
-              }
-          },
-          resetEvent(){
-              wx.showModal({
-                  title: '',
-                  content: '请确认是否重启设备？',
-                  success (res) {
-                      if (res.confirm) {
-                          console.log('用户点击确定')
-                          // this.reset();
-                      } else if (res.cancel) {
-                          console.log('用户点击取消')
-                      }
-                  }
-              })
-          },
-          async reset(){
-              let result = await this.$http.deviceRestart({'imei':this.imei })
-              if(result && result.data){
-                  // this.deviceInfo = result.data;
-                  wx.showToast({
-                      title: '重启设备成功',
-                      icon: 'success',
-                      duration: 2000
-                  })
-              }
-          },
+        ]
       }
+    },
+    mounted(){
+      this.getDeviceInfo();
+    },
+    onLoad (options) {
+      console.log(options)
+      this.imei = options.imei
+    },
+    methods: {
+      async getDeviceInfo(){
+        let result = await this.$http.deviceGet({'imei':this.imei })
+        if(result && result.data){
+          this.info = result.data;
+          for(let i =0; i<this.items.length;i++){
+              if(this.info.refreshTime == this.items[i].value){
+                  this.items[i].checked = true
+              }
+          }
+
+        }
+      },
+      switch1Change(e){
+        console.log(e.target.value)
+        this.deviceUpdate({gpsOn: e.target.value})
+      },
+      switch2Change(e){
+        console.log(e.target.value)
+        this.deviceUpdate({wifiOn: e.target.value})
+      },
+      switch3Change(e){
+        console.log(e.target.value)
+        this.deviceUpdate({lbsOn: e.target.value})
+      },
+      async radioChange (e) {
+        console.log('radio发生change事件，携带value值为：', e.target.value)
+        this.deviceUpdate({refreshTime: e.target.value})
+      },
+      async deviceUpdate(data){
+        let result = await this.$http.deviceUpdate({'imei':this.imei, ...data})
+        if(result){
+          wx.showToast({
+              title: '设备信息设置成功',
+              icon: 'success',
+              duration: 2000
+          })
+        }
+      },
+      resetEvent(){
+        wx.showModal({
+          title: '',
+          content: '请确认是否重启设备？',
+          success (res) {
+            if (res.confirm) {
+                console.log('用户点击确定')
+                // this.reset();
+            } else if (res.cancel) {
+                console.log('用户点击取消')
+            }
+          }
+        })
+      },
+      async reset(){
+        let result = await this.$http.deviceRestart({'imei':this.imei })
+        if(result && result.data){
+            // this.deviceInfo = result.data;
+          wx.showToast({
+            title: '重启设备成功',
+            icon: 'success',
+            duration: 2000
+          })
+        }
+      }
+    }
   }
 </script>
 

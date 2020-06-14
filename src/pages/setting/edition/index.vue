@@ -1,6 +1,6 @@
 <template>
   <div class="edition">
-    <div class="suogong">
+    <!-- <div class="suogong">
        <img class="suogong_img" src="/static/resources/setting/suogong.png"> 
        <div>索工</div>
        <div class="edit_banben">V 0.0.0</div>
@@ -13,15 +13,16 @@
     <div class="new_banben">
       <span>官网</span>
       <img class="arr_right" src="/static/resources/arr_right.png"> 
-    </div>
+    </div> -->
+    <web-view src="https://www.suogong.com.cn" />
   </div>
 </template>
 
 <script>
   export default {
      data: () => ({
-      messageList: [1,2,3,4,5,6],
-      'imei':'353520171025838',
+      messageList: [],
+      'imei':'',
       count: 1
     }),
     mounted(){
