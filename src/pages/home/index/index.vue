@@ -64,10 +64,12 @@ export default {
   methods: {
     ...mapMutations(['update']),
     async getDeviceList () {
-      const { success, data } = await this.$http.deviceList({type: 0})
-      if (success && data.length) {
-        this.deviceList = data.dataList
-        this.handeDeviceChange(data[0])
+      const { success, data, msg } = await this.$http.deviceList({type: 0})
+      if (!success) return wx.showToast({ title: msg, icon: 'none' })
+      const { dataList } = data
+      if (dataList.length) {
+        this.deviceList = dataList
+        this.handeDeviceChange(dataList[0])
       }
     },
     async noticeUnreadCount () {
@@ -81,6 +83,7 @@ export default {
     async deviceRefreshGps (imei) {
       const { success, data, msg } = await this.$http.deviceRefreshGps({imei})
       if (!success) return wx.showToast({ title: msg, icon: 'none' })
+      if (!data) return wx.showToast({ title: '暂无定位', icon: 'none' })
       this.device.pos = data
     },
     async handleSearch (search) {
