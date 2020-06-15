@@ -6,11 +6,11 @@
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
-        <div class="name ellipsis">{{ currentDevice.name }}</div>
+        <div class="name ellipsis">{{ currentDevice.babyName }}</div>
         <img class="img_arrow_down" src="/static/resources/home/arrow_down.png" alt="">
       </div>
       <img class="img_question" src="/static/resources/home/question.png" alt="">
-      <img class="img_scan" src="/static/resources/home/scan.png" alt="">
+      <img class="img_scan" src="/static/resources/home/scan.png" @click="scanCode">
     </div>
     <div class="TopSearch" v-else>
       <input v-model="search" @input="handleInput" class="flex-1" type="text" placeholder="请输入设备名称或imei号">
@@ -24,8 +24,8 @@
         :class="{active: currentDevice.imei === x.imei}"
       >
         <div class="flex-align-center">
-          <img class="img_device" :src="x.avatar" alt="">
-          <div class="name">{{ x.name }}</div>
+          <img class="img_device" :src="x.babyAvatar" alt="">
+          <div class="name">{{ x.babyName }}</div>
         </div>
         <div class="radius" :class="{online: x.online}"></div>
       </div>
@@ -50,11 +50,20 @@ export default {
     ...mapState(['userInfo'])
   },
   watch: {
-    'currentDevice.name' (name) {
-      this.search = name
+    'currentDevice.babyName' (babyName) {
+      this.search = babyName
     }
   },
   methods: {
+    scanCode () {
+      wx.scanCode({
+        success (res) {
+          console.log(res.result)
+          console.log(res.path)
+          wx.showToast({ title: res.result, icon: 'none' })
+        }
+      })
+    },
     onDeviceChange (device) {
       this.$emit('deviceChange', device)
       setTimeout(() => {
@@ -148,7 +157,7 @@ export default {
       border-radius: 50%;
       background: gray;
       &.online {
-        background: green;
+        background: rgb(62, 236, 62);
       }
     }
   }

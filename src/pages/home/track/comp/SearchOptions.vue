@@ -5,15 +5,19 @@
       <div class="SearchOptions">
         <div class="item">
           <div class="name">当前选择:</div>
-          <picker mode="date" :value="dates[0]" :start="dates[0]" :end="dates[dates.length-1]" @change="bindDateChange">
-            <view class="picker">{{date}}</view>
+          <picker mode="date" :value="dates[0]" @change="bindDateChange">
+            <view class="picker">{{date || '--'}}</view>
           </picker>
         </div>
         <div class="item time">
           <div class="name">时间段:</div>
-          <picker mode="time" :value="startHour" @change="handleStartHourChange">{{startHour}}</picker>
+          <picker mode="time" :value="startHour" @change="handleStartHourChange">
+            <button>{{startHour}}</button>
+          </picker>
           <div class="split">-</div>
-          <picker mode="time" :value="endHour" @change="handleEndHourChange">{{endHour}}</picker>
+          <picker mode="time" :value="endHour" @change="handleEndHourChange">
+            <button>{{endHour}}</button>
+          </picker>
           <!-- <TimeLine :startHour="startHour" :endHour="endHour" @change="handleHourChange"/> -->
         </div>
         <div class="item">
@@ -48,14 +52,15 @@ export default {
     dates: []
   },
   data: () => ({
+    date: '',
     startHour: '01:00',
     endHour: '24:00',
     showDrawer: false,
     rectify: false,
     DATA_TYPES: [
-      { value: 1, text: 'gps' },
-      { value: 2, text: 'WIFI' },
-      { value: 3, text: '基站' }
+      { value: 1, text: 'gps', checked: true },
+      { value: 2, text: 'WIFI', checked: true },
+      { value: 3, text: '基站', checked: true }
     ],
     dataTypeList: []
   }),
@@ -69,11 +74,11 @@ export default {
     checkboxChange (e) {
       this.dataTypeList = e.target.value
     },
-    handleStartHourChange (startHour) {
-      this.startHour = startHour
+    handleStartHourChange (e) {
+      this.startHour = e.target.value
     },
-    handleEndHourChange (endHour) {
-      this.endHour = endHour
+    handleEndHourChange (e) {
+      this.endHour = e.target.value
     },
     submit () {
       this.$emit('submit', {
@@ -115,6 +120,9 @@ export default {
       height: 100rpx;
       .split {
         margin: 0 20rpx;
+      }
+      button {
+        line-height: 2;
       }
     }
     .name {
