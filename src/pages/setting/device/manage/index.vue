@@ -264,6 +264,7 @@
     height: 90rpx;
     line-height: 90rpx;
     text-align: center;
+    font-size: 28rpx;
     color: #000;
     >span{
       display: inline-block;
@@ -294,7 +295,7 @@
         line-height: 80rpx;
         padding-left: 40rpx;
         padding-right: 60rpx;
-        font-size: 25rpx;
+        font-size: 30rpx;
         border: none;
 
       }
@@ -356,7 +357,7 @@
     p{
       display: inline-block;
       color: #878B8E;
-      font-size: 20rpx;
+      font-size: 26rpx;
       >img{
         margin-right: 8rpx;
       }
