@@ -47,7 +47,7 @@ export default {
       renewList: [{name:'设备续费',type:1},{name:'短信充值',type:2}],
       list:[],
       list1:[],
-      type: 1,
+      type: '1',
       id: '',
       imei:'',
       info: {},
@@ -56,14 +56,15 @@ export default {
       loading: false
     }
   },
-  mounted(){
-    console.log(this.$store.state.deviceInfo.imei)
+  onLoad(options){
+    console.log(options.imei)
+    this.imei = options.imei
     this.getPayList();
     this.getDeviceInfo();
   },
-  onLoad (options) {
-    this.imei = options.imei
-  },
+  // onLoad (options) {
+  //   this.imei = options.imei
+  // },
   methods: {
     async getDeviceInfo(){
       let result = await this.$http.deviceGet({'imei':this.imei })
@@ -89,6 +90,14 @@ export default {
       })
       this.id = this.list1[0].id
     },
+    checkPrice(x){
+      console.log(x)
+      console.log(this.id)
+      this.id = x.id
+      console.log(x.id)
+      console.log(this.id) 
+      console.log(this.id == x.id)
+      },
     handleChange(){
 
     },
