@@ -31,7 +31,7 @@ import { mapMutations } from 'vuex'
       deviceInfo: {},
       disabled: false
     }),
-    mounted(){
+    onLoad(){
       this.imei =this.$store.state.deviceInfo.imei
       this.getDeviceInfo();
     },
