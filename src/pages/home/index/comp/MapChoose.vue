@@ -35,7 +35,7 @@ export default {
     mapType: String
   },
   data: () => ({
-    showDrawer: true
+    showDrawer: false
   }),
   computed: {
     mapTypes () {

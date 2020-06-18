@@ -4,34 +4,34 @@
       <img class="img_location" src="/static/resources/home/location.png" alt="">
     </div>
     <div class="address">
-      <div class="flex-1">{{ device.address }}</div>
+      <div class="flex-1">{{ recordLast.address }}</div>
       <img class="img_daohang" src="/static/resources/home/daohang.png" @click="$emit('daohang')">
     </div>
     <div class="more_info" :class="{show: showMore}">
       <div class="flex">
         <div class="info_item">
-          <div>时间：{{ device.date }}</div>
-          <div>通讯：11</div>
+          <div>时间：{{ recordLast.date }}</div>
+          <div>通讯：???</div>
         </div>
         <div>
-          <div>信号：{{ device.signal }}</div>
-          <div>卫星：11</div>
+          <div>信号：{{ recordLast.signal }}</div>
+          <div>卫星：{{ recordLast.satellite}}</div>
         </div>
         <div class="battery_wrap">
           <div class="battery">电池</div>
-          <div class="percent">{{ device.electricity }}%</div>
+          <div class="percent">{{ recordLast.electricity }}%</div>
         </div>
       </div>
       <div class="flex mt-8">
         <div class="info_item">
-          <div>速度：{{ device.speed }}</div>
-          <div>经度：{{ device.lng }}</div>
-          <div>温度：11</div>
+          <div>速度：{{ recordLast.speed || 0 }}</div>
+          <div>经度：{{ recordLast.lng }}</div>
+          <div>温度：{{ recordLast.temperature || '无' }}</div>
         </div>
         <div>
-          <div>模式：{{ device.type }}</div>
-          <div>纬度：{{ device.lat }}</div>
-          <div>海拔：11</div>
+          <div>模式：{{ recordLast.type }}</div>
+          <div>纬度：{{ recordLast.lat }}</div>
+          <div>海拔：{{ recordLast.altitude }}</div>
         </div>
       </div>
     </div>
@@ -47,7 +47,7 @@ import { formatTime } from '@/utils'
 
 export default {
   props: {
-    device: Object
+    recordLast: Object
   },
   data: () => ({
     showMore: false

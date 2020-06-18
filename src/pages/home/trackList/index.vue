@@ -11,12 +11,12 @@
               <span>纬度：{{ x.lat }}</span>
             </div>
             <div class="li">
-              <span>海拔：0</span>
+              <span>海拔：{{ x.altitude || '无' }}</span>
               <span>日期：{{ x.date }}</span>
             </div>
           </div>
         </div>
-        <div class="right">定位模式：{{ getType(x.type) }}</div>
+        <div class="right">定位模式：{{ x.type }}</div>
       </div>
     </div>
   </div>
@@ -29,24 +29,16 @@ export default {
     list: []
   }),
   onLoad (options) {
-    this.trackRecordList(options.imei)
+    this.trackRecordList(options)
   },
   methods: {
-    async trackRecordList (imei) {
-      const { success, msg, data } = await this.$http.trackRecordList({imei})
+    async trackRecordList (params) {
+      const { success, msg, data } = await this.$http.trackRecordList(params)
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data.length) {
-        this.list = data
+        this.list = data.slice(0, 10)
       } else {
         this.isNoData = true
-      }
-    },
-    getType (type) {
-      switch (type) {
-        case 1: return 'gps'
-        case 2: return 'WIFI'
-        case 3: return '基站'
-        default: '--'
       }
     }
   }

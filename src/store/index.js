@@ -16,11 +16,7 @@ const store = new Vuex.Store({
       userName: '',
       avatarUrl: '/static/resources/login/user.png'
     },
-    deviceInfo: {
-      imei: '',
-      lng: '113.3245211',
-      lat: '23.10229'
-    }
+    imei: ''
   },
   mutations: {
     /**

@@ -2,7 +2,7 @@
   <block>
     <div class="TopSearch" v-if="!showSelect">
       <navigator url="/pages/setting/index/main">
-        <img class="img_avatar" :src="userInfo.avatarUrl" />
+        <img class="img_avatar" :src="currentDevice.avatar || currentDevice.babyAvatar" />
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>

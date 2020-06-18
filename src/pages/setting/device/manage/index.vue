@@ -168,13 +168,13 @@
           success (res) {
             console.log(res.tapIndex)
             if(res.tapIndex == 0){
-              // that.$store.state.deviceInfo.imei = imei
+              // that.$store.state.imei = imei
               wx.navigateTo({url: `/pages/setting/device/edit/main?imei=${item.imei}`})
             }else if(res.tapIndex == 1){
               that.unbindEvent()
             }else if(res.tapIndex == 2){
               // that.$store.update({'imei':item.imei})
-              // console.log(item.imei,that.$store.state.deviceInfo.imei)
+              // console.log(item.imei,that.$store.state.imei)
               wx.navigateTo({url:`/pages/setting/device/renew/main?imei=${item.imei}`})
             }
           },

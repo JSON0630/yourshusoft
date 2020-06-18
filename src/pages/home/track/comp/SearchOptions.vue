@@ -5,8 +5,8 @@
       <div class="SearchOptions">
         <div class="item">
           <div class="name">当前选择:</div>
-          <picker mode="date" :value="dates[0]" @change="bindDateChange">
-            <view class="picker">{{date || '--'}}</view>
+          <picker mode="date" :value="date" @change="bindDateChange">
+            <button>{{innerDate}}</button>
           </picker>
         </div>
         <div class="item time">
@@ -49,12 +49,12 @@ import { formatTime } from '@/utils'
 export default {
   components: { Drawer },
   props: {
-    dates: []
+    date: String
   },
   data: () => ({
-    date: '',
-    startHour: '01:00',
-    endHour: '24:00',
+    innerDate: '',
+    startHour: '00:00',
+    endHour: '23:59',
     showDrawer: false,
     rectify: false,
     DATA_TYPES: [
@@ -64,9 +64,14 @@ export default {
     ],
     dataTypeList: []
   }),
+  watch: {
+    date (v) {
+      this.innerDate = v
+    }
+  },
   methods: {
     bindDateChange (e) {
-      this.date = e.target.value
+      this.innerDate = e.target.value
     },
     rectifyChange (e) {
       this.rectify = e.target.value
@@ -84,8 +89,7 @@ export default {
       this.$emit('submit', {
         dataTypeList: this.dataTypeList.slice(),
         rectify: this.rectify,
-        startTime: formatTime(this.date, 'yyyy年MM月dd日 ') + this.startHour + ':00',
-        endTime: formatTime(this.date, 'yyyy年MM月dd日 ') + this.endHour + ':00'
+        date: this.innerDate
       })
     }
   }
@@ -121,9 +125,9 @@ export default {
       .split {
         margin: 0 20rpx;
       }
-      button {
-        line-height: 2;
-      }
+    }
+    button {
+      line-height: 2;
     }
     .name {
       width: 150rpx;

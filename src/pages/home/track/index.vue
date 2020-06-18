@@ -7,7 +7,7 @@
       :markers="markers"
       style="width: 100%; height: 100vh;"
     />
-    <SearchOptions :dates="dates" :date="date" @submit="trackRecordList"/>
+    <SearchOptions :date="date" @submit="trackRecordList"/>
     <div class="bottom">
       <div class="media_btn">
         <img class="img_m_left" src="/static/resources/home/m_left.png" alt="">
@@ -17,8 +17,8 @@
       </div>
       <div class="info">
         <div class="address">
-          <div class="text">{{ lastInfo.address }}</div>
-          <div class="time">{{ lastInfo.date }}   定位模式:LBS</div>
+          <div class="text">{{ recordLast.address }}</div>
+          <div class="time">{{ recordLast.date }}   定位模式:{{ recordLast.type }}</div>
         </div>
         <div class="all_btn" @click="goTrackList">
           <img class="img_all_track" src="/static/resources/home/all_track.png" alt="">
@@ -37,36 +37,19 @@ import { formatTime } from '@/utils'
 export default {
   components: { SearchOptions },
   data: () => ({
-    dates: [],
-    lastInfo: {},
+    date: '',
+    recordLast: {},
     trackList: [],
-    points: [{
-      latitude: 25.03682953251695,
-      longitude: 102.67484140406796
-    },
-    {
-      latitude: 25.036132223872958,
-      longitude: 102.67386832053477
-    },
-    {
-      latitude: 25.035328234772695,
-      longitude: 102.67441722093537
-    },
-    {
-      latitude: 25.03587706184719,
-      longitude: 102.67548958617391
-    },
-    {
-      latitude: 25.03682953251695,
-      longitude: 102.67484140406796
-    }]
+    points: [],
+    startTime: '',
+    endTime: ''
   }),
   computed: {
-    ...mapState(['deviceInfo']),
+    ...mapState(['imei']),
     polyline () {
       return [{
         points: this.points,
-        color: '#ff00004d',
+        color: '#4c8eff',
         width: 4,
         arrowLine: true
       }]
@@ -82,29 +65,35 @@ export default {
     }
   },
   mounted () {
-    this.trackRecordLast(this.deviceInfo.imei)
-    this.trackRecordCheck(this.deviceInfo.imei)
+    this.trackRecordLast()
+    this.trackRecordCheck()
   },
   methods: {
-    async trackRecordLast (imei) {
-      const { success, data, msg } = await this.$http.trackRecordLast({imei})
+    async trackRecordLast () {
+      const { success, data, msg } = await this.$http.trackRecordLast({imei: this.imei})
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-      const lastInfo = data
+      this.recordLast = data
     },
-    async trackRecordCheck (imei) {
-      const { success, data, msg } = await this.$http.trackRecordCheck({imei})
+    async trackRecordCheck () {
+      const { success, data, msg } = await this.$http.trackRecordCheck({imei: this.imei})
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (!data.length) { return wx.showToast({ title: '无记录', icon: 'none' }) }
-      this.dates = data
       this.trackRecordList({
         dataTypeList: [1, 2, 3],
         rectify: false,
-        startTime: formatTime(data[0], 'yyyy年MM月dd日 ') + '00:00:00',
-        endTime: formatTime(data[0], 'yyyy年MM月dd日 ') + '24:59:59'
+        date: data[data.length - 1]
       })
     },
     async trackRecordList (params) {
-      const { success, data, msg } = await this.$http.trackRecordList({...params, imei: this.deviceInfo.imei})
+      this.date = params.date
+      this.startTime = formatTime(params.date, 'yyyy年MM月dd日 ') + '00:00:00'
+      this.endTime = formatTime(params.date, 'yyyy年MM月dd日 ') + '23:59:59'
+      const { success, data, msg } = await this.$http.trackRecordList({
+        imei: this.imei,
+        startTime: this.startTime,
+        endTime: this.endTime,
+        ...params
+      })
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (!data.length) { return wx.showToast({ title: '无记录', icon: 'none' }) }
       this.trackList = Object.freeze(data)
@@ -112,7 +101,7 @@ export default {
     },
     goTrackList () {
       wx.navigateTo({
-        url: `/pages/home/trackList/main?imei=${this.deviceInfo.imei}`
+        url: `/pages/home/trackList/main?imei=${this.imei}&startTime=${this.startTime}&endTime=${this.endTime}`
       })
     }
   }

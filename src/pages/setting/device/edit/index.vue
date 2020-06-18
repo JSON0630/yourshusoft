@@ -109,7 +109,7 @@ export default {
       count: 1
     }),
     onLoad(){
-      this.imei =this.$store.state.deviceInfo.imei
+      this.imei =this.$store.state.imei
       this.getDeviceInfo();
     },
     methods:{
