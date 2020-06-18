@@ -66,9 +66,9 @@ export default {
   /** SMS - 发送手机验证码 */
   smsSendCode: '/sms/sendCode',
   /** TRACK - 最后位置 */
-  trackRecordLast: '/track_record/last',
+  trackRecordLast: '/track_record/last/v2',
   /** TRACK - 轨迹列表 */
-  trackRecordList: '/track_record/list',
+  trackRecordList: '/track_record/list/v2',
   /** TRACK - 轨迹检查 */
   trackRecordCheck: '/track_record/check',
   /** USER - 小程序授权登陆 */
