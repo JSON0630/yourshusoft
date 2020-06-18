@@ -14,7 +14,10 @@
             :key="i"
             :class="{active: mapType === x.label}"
             @click="$emit('change', x.label)"
-          >{{x.label}}</div>
+          >
+            <img class="img_label" :src="x.src" alt="">
+            <div>{{x.label}}</div>
+          </div>
         </div>
       </div>
     </Drawer>
@@ -36,7 +39,7 @@ export default {
   }),
   computed: {
     mapTypes () {
-      return Object.entries(MAP_TYPE).map(([type, label]) => ({type, label}))
+      return Object.entries(MAP_TYPE).map(([type, label]) => ({type, label, src: `/static/resources/home/${type}.png`}))
     }
   }
 }
@@ -77,8 +80,31 @@ export default {
     padding: 20rpx;
     .item {
       margin-right: 20rpx;
+      text-align: center;
       &.active {
-        color: royalblue;
+        color: #4c8eff;
+        .img_label {
+          border-color: #4c8eff;
+          &::after {
+            content: '✔';
+            text-align: center;
+            color: #fff;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 45rpx;
+            width: 100%;
+            background: #4c8eff;
+          }
+        }
+      }
+      .img_label {
+        position: relative;
+        width: 195rpx;
+        height: 150rpx;
+        margin-bottom: 10rpx;
+        border: 2px solid transparent;
+        border-radius: 9px;
       }
     }
   }

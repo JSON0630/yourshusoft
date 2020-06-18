@@ -1,25 +1,28 @@
 <template>
-  <div class="HomeIndex">
-    <TopSearch
-      :deviceList="deviceList"
-      :currentDevice="device.current"
-      @deviceChange="handeDeviceChange"
-      @search="handleSearch"
-    />
-    <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
-    <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
-    <PopAddress :device="device.detail" @onPos="handlePos" @daohang="handleDaohang"/>
-    <PosBottom />
+  <block>
     <map
       id="map"
+      class="home_map"
       :enable-satellite="mapType===MAP_TYPE.satellite"
-      :longitude="device.pos.lng"
-      :latitude="device.pos.lat"
+      :longitude="recordLast.lng"
+      :latitude="recordLast.lat"
       scale="100"
       show-location
       style="width: 100%; height: 100vh;"
     />
-  </div>
+    <div class="HomeIndex" v-if="recordLast.imei">
+      <TopSearch
+        :deviceList="deviceList"
+        :currentDevice="currentDevice"
+        @deviceChange="handeDeviceChange"
+        @search="handleSearch"
+      />
+      <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
+      <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
+      <PopAddress :recordLast="recordLast" @onPos="handlePos" @daohang="handleDaohang"/>
+      <PosBottom />
+    </div>
+  </block>
 </template>
 
 <script>
@@ -41,13 +44,11 @@ export default {
     PosBottom
   },
   data: () => ({
-    device: {
-      current: {},
-      pos: {
-        lng: '113.324520',
-        lat: '23.099994'
-      },
-      detail: {}
+    currentDevice: {},
+    recordLast: {
+      imei: '',
+      lng: '',
+      lat: ''
     },
     deviceList: [],
     unreadCount: 0,
@@ -66,34 +67,31 @@ export default {
     async deviceListSimple () {
       const { success, data } = await this.$http.deviceListSimple()
       if (success && data.length) {
-        this.deviceList = data
+        this.deviceList = Object.freeze(data.slice(0, 10))
         this.handeDeviceChange(data[0])
       }
+    },
+    handeDeviceChange (device) {
+      this.currentDevice = device
+      this.trackRecordLast(device.imei)
     },
     async noticeUnreadCount () {
       const { success, data } = await this.$http.noticeUnreadCount()
       if (success) { this.unreadCount = data }
     },
-    async deviceGet (imei) {
-      const { success, data } = await this.$http.deviceGet({imei})
-      if (success) { this.device.detail = data }
-    },
-    async deviceRefreshGps (imei) {
-      const { success, data } = await this.$http.deviceRefreshGps({imei})
-      if (success) { this.device.pos = data }
+    async trackRecordLast (imei) {
+      const { success, data, msg } = await this.$http.trackRecordLast({imei})
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      this.recordLast = data
+      this.update({imei: data.imei})
     },
     async handleSearch (search) {
-      const { success, data } = await this.$http.deviceSearch({imei: search, val: 1})
-      if (success) { this.deviceList = data }
-    },
-    handeDeviceChange (device) {
-      this.device.current = device
-      this.deviceRefreshGps(device.imei)
-      this.deviceGet(device.imei)
-      this.update({deviceInfo: {imei: device.imei, ...this.device.pos}})
+      const { success, data, msg } = await this.$http.deviceSearch({imei: search, val: 1})
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      this.deviceList = Object.freeze(data)
     },
     handlePos () {
-      const { lng, lat } = this.device.pos
+      const { address, lng, lat } = this.recordLast
       map.moveToLocation({
         longitude: lng,
         latitude: lat,
@@ -106,14 +104,16 @@ export default {
       })
     },
     handleDaohang () {
+      const { address, lng, lat } = this.recordLast
+      const { name, babyName } = this.currentDevice
       wx.getLocation({
         type: 'wgs84', // 返回可以用于wx.openLocation的经纬度，官方提示bug: iOS 6.3.30 type 参数不生效，只会返回 wgs84 类型的坐标信息  
         success: function (res) {
           wx.openLocation({
-            latitude: 22.5542080000,
-            longitude: 113.8878770000,
-            name: "宝安中心A地铁口xxxxx",
-            address:'宝安中心A地铁口xxxxx'
+            latitude: lat,
+            longitude: lng,
+            name: name || babyName,
+            address
           })
         }
       })
@@ -126,6 +126,9 @@ export default {
 </script>
 
 <style lang="less">
+.home_map {
+  position: fixed;
+}
 .HomeIndex {
   background: rgb(103, 187, 103);
   height: 100vh;

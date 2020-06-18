@@ -33,7 +33,7 @@ import { mapMutations } from 'vuex'
       disabled: false
     }),
     onLoad(){
-      this.imei =this.$store.state.deviceInfo.imei
+      this.imei =this.$store.state.imei
       this.userInfo = this.$store.state.userInfo
       this.getDeviceInfo();
     },

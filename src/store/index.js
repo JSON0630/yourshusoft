@@ -22,7 +22,8 @@ const store = new Vuex.Store({
       lat: '23.10229'
     },
     filePath:'https://api.youshusoft.com/gpsserver/api/file/img/upload',
-    appId:'wx830de8b9fe1b325d'
+    appId:'wx830de8b9fe1b325d',
+    imei: ''
   },
   mutations: {
     /**

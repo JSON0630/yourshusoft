@@ -111,7 +111,7 @@ export default {
     }),
     onLoad(options){
       console.log(options.imei)
-      this.imei = options.imei
+      this.imei = options.imei || this.$store.state.imei
       // this.imei = this.$store.state.deviceInfo.imei
       this.getDeviceInfo();
     },

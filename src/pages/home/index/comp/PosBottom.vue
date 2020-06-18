@@ -1,13 +1,13 @@
 <template>
   <div class="PosBottom">
-    <navigator url="/pages/setting/device/setting/main" class="bottom_item">
+    <navigator url="/pages/setting/device/setting/main" class="bottom_item" hover-class="none">
       <img class="img_setting" src="/static/resources/home/setting.png" alt="">
       <div>设置</div>
     </navigator>
     <div class="pos_wrap">
       <img class="img_pos" src="/static/resources/home/pos.png" alt="">
     </div>
-    <navigator url="/pages/home/track/main" class="bottom_item">
+    <navigator url="/pages/home/track/main" class="bottom_item" hover-class="none">
       <img class="img_track" src="/static/resources/home/track.png" alt="">
       <div>轨迹</div>
     </navigator>
@@ -33,7 +33,6 @@ export default {
   background: #fff;
   box-shadow: 0 0 6rpx #ccc;
   border-radius: 60rpx;
-  padding: 0 70rpx;
   .pos_wrap {
     background: #fff;
     border-radius: 50%;
@@ -50,6 +49,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex: 1;
   }
   .img {
     &_setting { width: 41rpx; height: 42rpx; }

@@ -2,14 +2,14 @@
   <block>
     <div class="TopSearch" v-if="!showSelect">
       <navigator url="/pages/setting/index/main">
-        <img class="img_avatar" :src="userInfo.avatarUrl" />
+        <img class="img_avatar" :src="currentDevice.avatar || currentDevice.babyAvatar" />
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
-        <div class="name ellipsis">{{ currentDevice.babyName }}</div>
+        <div class="name ellipsis">{{ currentDevice.name || currentDevice.babyName }}</div>
         <img class="img_arrow_down" src="/static/resources/home/arrow_down.png" alt="">
       </div>
-      <img class="img_question" src="/static/resources/home/question.png" alt="">
+      <!-- <img class="img_question" src="/static/resources/home/question.png" alt=""> -->
       <img class="img_scan" src="/static/resources/home/scan.png" @click="scanCode">
     </div>
     <div class="TopSearch" v-else>
@@ -24,8 +24,8 @@
         :class="{active: currentDevice.imei === x.imei}"
       >
         <div class="flex-align-center">
-          <img class="img_device" :src="x.babyAvatar" alt="">
-          <div class="name">{{ x.babyName }}</div>
+          <img class="img_device" :src="x.avatar || x.babyAvatar" alt="">
+          <div class="name">{{ x.name || x.babyName }}</div>
         </div>
         <div class="radius" :class="{online: x.online}"></div>
       </div>
@@ -50,17 +50,17 @@ export default {
     ...mapState(['userInfo'])
   },
   watch: {
-    'currentDevice.babyName' (babyName) {
-      this.search = babyName
+    currentDevice (obj) {
+      this.search = obj.name || obj.babyName
     }
   },
   methods: {
     scanCode () {
       wx.scanCode({
-        success (res) {
-          console.log(res.result)
-          console.log(res.path)
-          wx.showToast({ title: res.result, icon: 'none' })
+        async success (res) {
+          const { success, data, msg } = await this.$http.deviceBind({imei: res.result})
+          if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+          wx.showToast({ title: '绑定成功', icon: 'success' })
         }
       })
     },
