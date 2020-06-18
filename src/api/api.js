@@ -71,6 +71,8 @@ export default {
   trackRecordList: '/track_record/list',
   /** TRACK - 轨迹检查 */
   trackRecordCheck: '/track_record/check',
+  /** USER - 小程序授权登陆 */
+  userWxMiniappLogin: '/user/wx/miniapp/login',
   /** USER - 手机动态码登陆 */
   userMobileLogin: '/user/mobileLogin',
   /** USER - 手机号码注册 */

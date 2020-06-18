@@ -66,7 +66,7 @@ export default {
     async deviceListSimple () {
       const { success, data } = await this.$http.deviceListSimple()
       if (success && data.length) {
-        this.deviceList = data
+        this.deviceList = Object.freeze(data.slice(0, 10))
         this.handeDeviceChange(data[0])
       }
     },
@@ -75,16 +75,24 @@ export default {
       if (success) { this.unreadCount = data }
     },
     async deviceGet (imei) {
-      const { success, data } = await this.$http.deviceGet({imei})
-      if (success) { this.device.detail = data }
+      const { success, data, msg } = await this.$http.deviceGet({imei})
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      Object.assign(this.device.detail, data)
     },
     async deviceRefreshGps (imei) {
       const { success, data } = await this.$http.deviceRefreshGps({imei})
-      if (success) { this.device.pos = data }
+      if (!success || !data) { return wx.showToast({ title: '无位置信息', icon: 'none' }) }
+      this.device.pos = data
+    },
+    async trackRecordLast (imei) {
+      const { success, data, msg } = await this.$http.trackRecordLast({imei})
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      Object.assign(this.device.detail, data)
     },
     async handleSearch (search) {
-      const { success, data } = await this.$http.deviceSearch({imei: search, val: 1})
-      if (success) { this.deviceList = data }
+      const { success, data, msg } = await this.$http.deviceSearch({imei: search, val: 1})
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      this.deviceList = Object.freeze(data)
     },
     handeDeviceChange (device) {
       this.device.current = device

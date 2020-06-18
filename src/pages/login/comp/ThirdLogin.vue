@@ -19,8 +19,11 @@ export default {
     login () {
       // 登录
       wx.login({
-        success: res => {
-          // 发送 res.code 到后台换取 openId, sessionKey, unionId
+        success: async res => {
+          const { success, data } = await this.$http.userWxMiniappLogin({ appid: '', code: res.code })
+          if (!success) { return wx.showToast({ title: '登录失败，请稍后再试', icon: 'none' }) }
+          wx.setStorageSync('TOKEN', data.token)
+          wx.setStorageSync('CODE', res.code)
         }
       })
       // 获取用户信息

@@ -4,33 +4,33 @@
       <img class="img_location" src="/static/resources/home/location.png" alt="">
     </div>
     <div class="address">
-      <div class="flex-1">广东省深圳市南山区西丽湖路4065号(西丽湖东</div>
+      <div class="flex-1">{{ device.address }}</div>
       <img class="img_daohang" src="/static/resources/home/daohang.png" @click="$emit('daohang')">
     </div>
     <div class="more_info" :class="{show: showMore}">
       <div class="flex">
         <div class="info_item">
-          <div>时间：{{ detail.createTime }}</div>
+          <div>时间：{{ device.date }}</div>
           <div>通讯：11</div>
         </div>
         <div>
-          <div>信号：信号</div>
+          <div>信号：{{ device.signal }}</div>
           <div>卫星：11</div>
         </div>
         <div class="battery_wrap">
           <div class="battery">电池</div>
-          <div class="percent">99%</div>
+          <div class="percent">{{ device.electricity }}%</div>
         </div>
       </div>
       <div class="flex mt-8">
         <div class="info_item">
-          <div>速度：4</div>
-          <div>经度：114.0412324</div>
+          <div>速度：{{ device.speed }}</div>
+          <div>经度：{{ device.lng }}</div>
           <div>温度：11</div>
         </div>
         <div>
-          <div>模式：GPS/BDS</div>
-          <div>纬度：11.23453245</div>
+          <div>模式：{{ device.type }}</div>
+          <div>纬度：{{ device.lat }}</div>
           <div>海拔：11</div>
         </div>
       </div>
@@ -51,15 +51,7 @@ export default {
   },
   data: () => ({
     showMore: false
-  }),
-  computed: {
-    detail() {
-      return {
-        ...this.device, 
-        createTime: formatTime(this.device.createTime, 'yyyy-MM-dd hh:mm:ss')
-      }
-    }
-  }
+  })
 }
 </script>
 

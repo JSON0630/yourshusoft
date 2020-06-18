@@ -34,7 +34,7 @@ export default {
   methods: {
     async trackRecordList (imei) {
       const { success, msg, data } = await this.$http.trackRecordList({imei})
-      if (!success) { wx.showToast({ title: msg, icon: 'none' }) }
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data.length) {
         this.list = data
       } else {

@@ -75,6 +75,8 @@ export default {
   trackRecordList: (data = {}) => post(api.trackRecordList, data),
   /** TRACK - 轨迹检查 */
   trackRecordCheck: (data = {}) => post(api.trackRecordCheck, data),
+  /** USER - 小程序授权登陆 */
+  userWxMiniappLogin: (data = {}) => post(api.userWxMiniappLogin, data),
   /** USER - 手机动态码登陆 */
   userMobileLogin: (data = {}) => post(api.userMobileLogin, data),
   /** USER - 手机号码注册 */
