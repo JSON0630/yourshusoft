@@ -2,6 +2,7 @@
   <block>
     <map
       id="map"
+      class="home_map"
       :enable-satellite="mapType===MAP_TYPE.satellite"
       :longitude="recordLast.lng"
       :latitude="recordLast.lat"
@@ -124,6 +125,9 @@ export default {
 </script>
 
 <style lang="less">
+.home_map {
+  position: fixed;
+}
 .HomeIndex {
   background: rgb(103, 187, 103);
   height: 100vh;
