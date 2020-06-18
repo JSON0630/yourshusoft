@@ -4,10 +4,10 @@
       <img class="img_location" src="/static/resources/home/location.png" alt="">
     </div>
     <div class="address">
-      <div class="flex-1">{{ recordLast.address }}</div>
+      <div class="flex-1" @click="showMore=!showMore">{{ recordLast.address }}</div>
       <img class="img_daohang" src="/static/resources/home/daohang.png" @click="$emit('daohang')">
     </div>
-    <div class="more_info" :class="{show: showMore}">
+    <div class="more_info" :class="{show: showMore}" @click="showMore=!showMore">
       <div class="flex">
         <div class="info_item">
           <div>时间：{{ recordLast.date }}</div>
