@@ -13,48 +13,50 @@
     </div>
     </div>
    
-    <scroll-view scroll-y class="device_box">
-      <div></div>
-      <template v-if="list.length>0">
-        <!-- <p>{{list.toString()}}</p> -->
-        <div class="device_item" v-for="(x,key) in list" :key=key>
-         <div class="device_item_top">
-          <img class="device_person" :src="x.babyAvatar?x.babyAvatar:'/static/resources/setting/person.png'"/>
-          <div>
-            <p class="device_status">
-              <span class="device_name">{{x.babyName}}</span>
-                <span class="offline"> 
-                  {{x.online?'在线':'离线'}}
-                </span>
-              <span class="device_batteray_span"> 
-                <img class="device_batteray" src="/static/resources/setting/batteray_0.png"/>
-                 <i style="display:inline-block;width:60rpx;text-algin:left;">{{x.electricity }}%</i>
-                </span>
-            </p>
-            <p class="device_ads">{{x.location.address}}</p>
+    <scroll-view scroll-y class="device_box"> 
+        <div v-if="list.length>0">
+          <div class="device_item" v-for="(x,key) in list" :key=key>
+            <div class="device_item_top">
+              <img class="device_person" :src="x.babyAvatar?x.babyAvatar:'/static/resources/setting/person.png'"/>
+              <div>
+                <p class="device_status">
+                  <span class="device_name">{{x.babyName}}</span>
+                    <span :class="x.online?'online': 'offline'"> 
+                      {{x.online?'在线':'离线'}}
+                    </span>
+                  <span class="device_batteray_span"> 
+                    <img  v-if='x.electricity<5' class="device_batteray" src="/static/resources/setting/batteray_0.png"/>
+                    <img v-else-if='x.electricity>90' class="device_batteray" src="/static/resources/setting/batteray_100.png"/>
+                    <img v-else-if='(x.electricity<90)&&(x.electricity>60)' class="device_batteray" src="/static/resources/setting/batteray_75.png"/>
+                       <img v-else-if='(x.electricity<60)&&(x.electricity>30)' class="device_batteray" src="/static/resources/setting/batteray_50.png"/>
+                    <img v-else class="device_batteray" src="/static/resources/setting/batteray_30.png"/>
+                    <i style="display:inline-block;width:60rpx;text-algin:left;">{{x.electricity }}%</i>
+                    </span>
+                </p>
+                <p class="device_ads">{{x.location.address}}</p>
+              </div>
+            </div>
+            <div class="device_item_bottom">
+              <p @click="goPosition(x)" >
+                <img class="device_dingwei" src="/static/resources/setting/dingwei.png"/>
+                定位
+              </p>
+              <p @click="goTrack(x)">
+                <img class="device_guiji" src="/static/resources/setting/guiji.png"/>
+                  轨迹
+              </p>
+              <p @click="goSetting(x)">
+                <img class="device_set" src="/static/resources/setting/set.png"/>
+                  设置
+              </p>
+              <p @click="more(x)"> 
+                <img class="device_more" src="/static/resources/setting/more.png"/>
+                  更多
+              </p>
+            </div>
           </div>
-        </div>
-        <div class="device_item_bottom">
-          <p @click="goPosition(x)" >
-            <img class="device_dingwei" src="/static/resources/setting/dingwei.png"/>
-            定位
-          </p>
-          <p @click="goTrack(x)">
-            <img class="device_guiji" src="/static/resources/setting/guiji.png"/>
-              轨迹
-          </p>
-          <p @click="goSetting(x)">
-            <img class="device_set" src="/static/resources/setting/set.png"/>
-              设置
-          </p>
-          <p @click="more(x)"> 
-            <img class="device_more" src="/static/resources/setting/more.png"/>
-              更多
-          </p>
-        </div>
       </div>
-      </template>
-      <p  v-else style="color:#878B8E;font-size:30rpx;margin-top: 289rpx;text-align: center;">暂无数据</p>
+      <p v-else style="color:#878B8E;font-size:30rpx;margin-top: 289rpx;text-align: center;">暂无数据</p>
 
     </scroll-view>
   </div>
@@ -85,35 +87,23 @@
         keyword: ''
       }) 
     },
-    // mounted(){
-    //   this.getDeviceList({
-    //     type: this.keyIndex,
-    //     size: 10,
-    //     number: this.page,
-    //     keyword: ''
-    //   })
-    // },
     methods: {
-      async getDeviceList(data){
+      async getDeviceList(obj){
          wx.showToast({
           title: '加载中...',
           icon: 'loading',
           duration: 1000
         })
-        let result = await this.$http.deviceList(data)
-        if(result && result.data){
-          this.list = this.list.concat(result.data.dataList)
+        const { success, data, msg }  = await this.$http.deviceList(obj)
+        if(!success){
+          return wx.showToast({ title: msg, icon: 'none' })
         }
-        console.log(this.list)
+        if (!data.dataList.length) { return wx.showToast({ title: '暂无设备', icon: 'none' }) }
+        this.list = Object.freeze(this.list.concat(data.dataList))
+        console.log(this.list,'list')
       },
       changeTabs(x,key){
-        console.log(x)
-        console.log(this.keyIndex) 
         this.keyIndex =x.value
-        console.log(x.value == this.keyIndex )
-        console.log(this.keyIndex)
-      //  this.$set('this.keyIndex',x.value) 
-      //  this.keyIndex = x.valvue
         this.page = 1
         this.list = []
         this.getDeviceList({
@@ -125,7 +115,6 @@
         );
       },
       search(){
-        console.log(this.deviceName)
         this.page = 1
         this.list = []
         this.getDeviceList({
@@ -149,32 +138,24 @@
         );
       },
       goPosition(item){
-        console.log(item)
         wx.navigateTo({url: `/pages/home/track/main?imei=${item.imei}`})
       },
       goTrack(item){
-        console.log(item)
         wx.navigateTo({url: `/pages/home/track/main?imei=${item.imei}`})
       },
       goSetting(item){
-        console.log(item)
         wx.navigateTo({url: `/pages/setting/device/setting/main?imei=${item.imei}`})
       },
       more(item){
-        console.log(item.imei)
         const that =this
         wx.showActionSheet({
           itemList: ['编辑', '解绑','续费'],
           success (res) {
-            console.log(res.tapIndex)
             if(res.tapIndex == 0){
-              // that.$store.state.deviceInfo.imei = imei
               wx.navigateTo({url: `/pages/setting/device/edit/main?imei=${item.imei}`})
             }else if(res.tapIndex == 1){
               that.unbindEvent()
             }else if(res.tapIndex == 2){
-              // that.$store.update({'imei':item.imei})
-              // console.log(item.imei,that.$store.state.deviceInfo.imei)
               wx.navigateTo({url:`/pages/setting/device/renew/main?imei=${item.imei}`})
             }
           },
@@ -198,44 +179,20 @@
         })
       },
       async unbind(){
-        console.log(11)
-        let result = await this.$http.deviceUnBind({'imei':this.imei })
-        console.log(result)
-        if(result &&result.code == 0){
-          wx.showToast({
-            title: '解绑设备成功',
-            icon: 'success',
-            duration: 2000
-          })
-          that.getDeviceList({
-            type: this.keyIndex,
-            size: 10,
-            number: 1,
-            keyword: this.deviceName
-          })
-        }else{
-          wx.showToast({
-            title: result.msg,
-            icon: 'success',
-            duration: 2000
-          })
-        }
+        const { success, data, msg }  = await this.$http.deviceUnBind({'imei':this.imei })
+        if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+        wx.showToast({ title: '解除绑定', icon: 'none' }) 
+        that.getDeviceList({
+          type: this.keyIndex,
+          size: 10,
+          number: 1,
+          keyword: this.deviceName
+        })
+        
       },
-      // onReachBottom(){
-      //   console.log(11)
-      //   console.log('dibu')
-      //   // this.getDeviceList()
-      // }
     },
     onReachBottom(){
-      console.log(11)
-      console.log('dibu')
       this.page++
-      //  wx.showToast({
-      //   title: '加载中...',
-      //   icon: 'loading',
-      //   duration: 1000
-      // })
       this.getDeviceList({
           type: this.keyIndex,
           size: 10,
@@ -327,18 +284,29 @@
         .device_name{
           color: #000;
         }
-        .device_batteray_span,.offline{
+        .device_batteray_span,.offline,.online{
           float: right;
         }
         .offline{
           margin-left: 30rpx;
           &::before{
             display: inline-block;
-              content: '';
-              height: 16rpx;
-              width: 16rpx;
-              border-radius: 50%;
-              background: #878B8E;
+            content: '';
+            height: 16rpx;
+            width: 16rpx;
+            border-radius: 50%;
+            background: #878B8E;
+          }
+        }
+        .online{
+          margin-left: 30rpx;
+          &::before{
+            display: inline-block;
+            content: '';
+            height: 16rpx;
+            width: 16rpx;
+            border-radius: 50%;
+            background: rgb(62, 236, 62);
           }
         }
       }

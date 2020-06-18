@@ -56,9 +56,7 @@ export default {
   /** PAY - 充值列表 */
   payRechargeList: '/pay/recharge/list',
   /** PAY - 微信支付 */
-  payRechargePayWx: '/pay/recharge/pay/wx',
-  /** PAY - 微信支付 */
-  payRechargePayWx: '/pay/recharge/pay/wx',
+  payRechargePayWx: '/pay/v2/recharge/pay/wx',
   /** PAY - 检查是否支付成功 */
   payRechargePayCheck: '/pay/recharge/pay/check',
   /** PAY - 检查是否支付成功 */

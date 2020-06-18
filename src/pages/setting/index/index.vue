@@ -3,8 +3,8 @@
     <div class="person_img" @click="goDeviceInfo">
       <!-- <img  class="person" src="/static/resources/setting/person.png"/> -->
       <img class="person" :src="deviceInfo.babyAvatar?deviceInfo.babyAvatar:'/static/resources/setting/person.png'" />
-      <div class="account" >{{deviceInfo.babyName?deviceInfo.babyName:'--'}}</div>
-      <div class="current_shebei">当前设备<span>{{deviceInfo.area? deviceInfo.area:'--'}}</span></div>
+      <div class="account" >{{userInfo.name?userInfo.name:'--'}}</div>
+      <div class="current_shebei">当前设备<span>{{deviceInfo.babyName? deviceInfo.babyName:'--'}}</span></div>
     </div>
     <div class="setting_item" @click="onDeviceList">
       <span><img class="shebei"  src="/static/resources/setting/shebei.png"/></span>
@@ -29,22 +29,24 @@ import { mapMutations } from 'vuex'
     data: () => ({
       'imei': '',
       deviceInfo: {},
+      userInfo:{},
       disabled: false
     }),
     onLoad(){
       this.imei =this.$store.state.deviceInfo.imei
+      this.userInfo = this.$store.state.userInfo
       this.getDeviceInfo();
     },
     methods: {
       ...mapMutations(['update']),
       async getDeviceInfo(){
-        let result = await this.$http.deviceGet({'imei':this.imei })
-        if(result && result.data){
-            this.deviceInfo = result.data;
-        }
+        const { success, data, msg } = await this.$http.deviceGet({imei:this.imei })
+        if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+        if (!data) { return wx.showToast({ title: '暂无信息', icon: 'none' }) }
+        this.deviceInfo = data
       },
       onDeviceList(){
-          wx.navigateTo({url: '/pages/setting/device/manage/main'})
+        wx.navigateTo({url: '/pages/setting/device/manage/main'})
       },
       onChangeEdition(){
           wx.navigateTo({url: '/pages/setting/edition/main'})
@@ -69,7 +71,6 @@ import { mapMutations } from 'vuex'
       async logOut(){
           this.disabled =true
           let result = await this.$http.userLogout()
-          console.log(result)
           wx.showToast({
               title: result.msg,
               icon: 'err',

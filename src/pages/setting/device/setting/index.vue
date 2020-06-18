@@ -12,7 +12,7 @@
             <radio-group @change="radioChange">
               <div class="time_item" v-for="(x,key) in items" :key=key >
                 <span>{{x.label}}</span>
-                <label class="radio"><radio :value="x.value" :checked="x.checked"/></label>
+                <label class="radio"><radio :value="x.value" :checked="x.checked" color="#4388FF"/></label>
               </div>
             </radio-group>
           </div>
@@ -29,14 +29,14 @@
             <div class="dingwei_item">
               <span>GPS+A-GPS+北斗</span>
               <label class="device_switch">
-                <switch :checked="info.gpsOn" @change="switch1Change"/>
+                <switch :checked="info.gpsOn" @change="switch1Change" color="#4388FF"/>
               </label>
             </div>
             <p class="dingwei_p">卫星定位只适用于室内，默认开启（精确度高）</p>
             <div class="dingwei_item">
               <span>Wi-Fi</span>
               <label class="device_switch">
-                <switch  :checked="info.wifiOn" @change="switch2Change"/>
+                <switch  :checked="info.wifiOn" @change="switch2Change" color="#4388FF"/>
               </label>
 
             </div>
@@ -44,16 +44,16 @@
             <div class="dingwei_item">
               <span>LBS基站</span>
               <label class="device_switch">
-                <switch :checked="info.lbsOn" @change="switch3Change"/>
+                <switch :checked="info.lbsOn" @change="switch3Change" color="#4388FF"/>
               </label>
             </div>
             <p class="dingwei_p">基站定位适用于室内与室外（精确度低）</p>
           </div>
         </div>
       </div>
-      <div class="btn_box" @click="resetEvent">
-        <button type="" :disabled="disabled" :loading=loading hover-class=“button-hover”>重启设备</button>
-      </div>
+    </div>
+    <div class="btn_box" @click="resetEvent">
+      <button type="" :disabled="disabled" :loading=loading hover-class=“button-hover”>重启设备</button>
     </div>
   </div>
 </template>
@@ -67,7 +67,6 @@
           wifiOn: true,
           lbsOn: true,
         },
-        // checked:false,
         isTimeShow: false,
         isPositionShow:false,
         imei:'',
@@ -106,12 +105,14 @@
     onLoad (options) {
       console.log(options)
       this.imei = options.imei
+      // this.imei = this.$store.state.deviceInfo.imei
     },
     methods: {
       async getDeviceInfo(){
-        let result = await this.$http.deviceGet({'imei':this.imei })
-        if(result && result.data){
-          this.info = result.data;
+        const { success, data, msg } = await this.$http.deviceGet({'imei':this.imei })
+        if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+        if(data){
+          this.info = data;
           for(let i =0; i<this.items.length;i++){
               if(this.info.refreshTime == this.items[i].value){
                   this.items[i].checked = true
@@ -136,24 +137,26 @@
         console.log('radio发生change事件，携带value值为：', e.target.value)
         this.deviceUpdate({refreshTime: e.target.value})
       },
-      async deviceUpdate(data){
-        let result = await this.$http.deviceUpdate({'imei':this.imei, ...data})
-        if(result){
+      async deviceUpdate(obj){
+        const { success, data, msg } = await this.$http.deviceUpdate({'imei':this.imei, ...obj})
+        if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+        if(data){
           wx.showToast({
-              title: '设备信息设置成功',
-              icon: 'success',
+              title: '设置成功',
+              icon: 'none',
               duration: 2000
           })
         }
       },
       resetEvent(){
+        const that = this
         wx.showModal({
           title: '',
           content: '请确认是否重启设备？',
           success (res) {
             if (res.confirm) {
                 console.log('用户点击确定')
-                // this.reset();
+                that.reset();
             } else if (res.cancel) {
                 console.log('用户点击取消')
             }
@@ -161,12 +164,12 @@
         })
       },
       async reset(){
-        let result = await this.$http.deviceRestart({'imei':this.imei })
-        if(result && result.data){
-            // this.deviceInfo = result.data;
+        const { success, data, msg } = await this.$http.deviceRestart({'imei':this.imei })
+        if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+        if(data){
           wx.showToast({
             title: '重启设备成功',
-            icon: 'success',
+            icon: 'none',
             duration: 2000
           })
         }
@@ -177,26 +180,26 @@
 
 <style lang="less" scoped>
   .device_setting{
-    position: absolute;
+    position: relative;
     background: #F6F6F6;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
     padding: 40rpx 20rpx;
-    padding-bottom: 200rpx;
-    font-size: 30rpx;
-    overflow: hidden;
+    font-size: 36rpx;
+    // overflow: hidden;
     .device_setting_box{
+      position: absolute;
+      width: 100%;
+      // height: 100%;
+      top: 0;
+      left: 0;
+      padding-bottom: 220rpx;
       background: #fff;
-      // padding: 20rpx 0rpx;
       .device_text{
         padding: 0 20rpx;
-        height: 80rpx;
-        line-height: 80rpx;
+        height: 90rpx;
+        line-height: 90rpx;
         .arr_right{
           float: right;
-          margin-top: 20rpx;
+          margin-top: 25rpx;
         }
       }
       .shengdian_set{
@@ -212,9 +215,9 @@
           .time_item{
             padding: 0rpx 20rpx;
             border-bottom: 1rpx solid #F6F6F6;
-            height: 80rpx;
-            line-height: 80rpx;
-            font-size: 24rpx;
+            height: 100rpx;
+            line-height: 100rpx;
+            font-size: 28rpx;
             .radio{
               float: right;
             }
@@ -224,7 +227,7 @@
           background: #F6F6F6;
           padding: 20rpx 30rpx;
           line-height: 1.5;
-          font-size: 20rpx;
+          font-size: 24rpx;
           color: #878B8E;
         }
       }
@@ -239,16 +242,16 @@
     .dingwei_set{
       background: #F6F6F6;
       // margin-top: 30rpx;
-      font-size: 30rpx;
+      font-size: 36rpx;
       .dingwei_list{
         .dingwei_item{
           position: relative;
           // margin-top: 30rpx;
           background: #fff;
           padding: 0rpx 20rpx;
-          height: 80rpx;
-          line-height: 80rpx;
-          font-size: 24rpx;
+          height: 100rpx;
+          line-height: 100rpx;
+          font-size: 28rpx;
           >span{
             display: inline-block;
             width: 81%;
@@ -265,7 +268,7 @@
           height: 60rpx;
           line-height: 60rpx;
           padding-left: 25rpx;
-          font-size: 20rpx;
+          font-size: 24rpx;
           color: #878B8E;
         }
       }
@@ -274,10 +277,12 @@
 
     .btn_box{
       position: fixed;
-      bottom: 100rpx;
+      bottom: 0rpx;
       left: 0;
       width: 100%;
+      padding-bottom: 80rpx;
       background: #F6F6F6;
+      z-index: 10;
       >button{
         background:#E64340;
         width: 90%;

@@ -1,8 +1,7 @@
 <template>
   <div class="message_box">
     <p @click="screenEvent" class="message_shaixuan">{{itemList[index]}}<span></span></p>
-    <div class="message_List">
-      <template v-if="list.length>0">
+    <div class="message_List" v-if="list.length>0">
         <div class="message_item" v-for="(x,key) in list" :key="key">
         <img class="person_img" :src="x.deviceInfo.avatar?x.deviceInfo.avatar:'/static/resources/setting/person.png'"/>
         <div class="message_item_text">
@@ -12,17 +11,15 @@
           <p>{{x.timeStr}}</p>
         </div>
       </div>
-      </template>
-      <p  v-else  class="empty" >暂无数据</p>
     </div>
-   
+    <p  v-else  class="empty" >暂无数据</p>
   </div>
 </template>
 
 <script>
   export default {
     data: () => ({
-      list: [{deviceInfo:{}}],
+      list: [],
       eventId: 0,
       itemList: ['全部', '围栏', '位移','低电','震动'],
       index: 0
@@ -32,9 +29,15 @@
     },
     methods:{
       async getMessageList(){
-        let result = await this.$http.noticeList({eventId:this.eventId })
-        if(result && result.data){
-            this.list = result.data;
+        wx.showToast({
+          title: '加载中...',
+          icon: 'loading',
+          duration: 1000
+        })
+        const { success, data, msg } = await this.$http.noticeList({eventId:this.eventId })
+        if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+        if(data){
+            this.list = data;
         }
       },
       screenEvent(){
@@ -42,11 +45,9 @@
         wx.showActionSheet({
           itemList: ['全部', '围栏', '位移','低电','震动'],
           success (res) {
-            console.log(res.tapIndex)
             that.index = res.tapIndex
             const arr_item = [0,43,42,41,40];
             that.eventId = arr_item[res.tapIndex]
-            console.log(that.eventId)
             that.getMessageList()
           },
           fail (res) {
@@ -107,7 +108,7 @@
           >p{
             margin-bottom: 10rpx;
             &:nth-child(1){
-              font-size: 36rpx;
+              font-size: 34rpx;
               color: #000;
             }
             &:nth-child(2){

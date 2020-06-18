@@ -3,7 +3,7 @@
     <div class="device_img_box">
       <p @click="unbindEvent" class="jiebang">解绑</p>
       <img @click="uploadImage" class="person_img" :src="deviceInfo.babyAvatar?deviceInfo.babyAvatar:'/static/resources/setting/person.png'" />
-      <p>点击可修改头像</p>
+      <p style="margin-top:-50rpx;"><img class="photo_img" src="/static/resources/setting/photo.png"/></p>
       <!-- <p>上传图片</p> -->
       <div class="img_box">
         <div class="img_text">
@@ -23,7 +23,7 @@
       </p>
       <p class="edit_p">
         <span>名称</span>
-        <span> <input class="search_text" type="text" @confirm="search" v-model="deviceInfo.babyName" placeholder="请输入名称"/></span>
+        <span> <input class="namd_text" type="text" v-model="deviceInfo.babyName" placeholder="请输入名称"/></span>
         <!-- <span>{{deviceInfo.babyName}}</span> -->
       </p>
       <p class="edit_p">
@@ -32,7 +32,7 @@
       </p>
     </div>
     <div class="btn_box" @click="resetEvent">
-      <button @click="save" type="" :disabled="disabled" :loading=loading hover-class=“button-hover”>保存</button>
+      <button @click="save" type="" :disabled="disabled" :loading='disabled' hover-class=“button-hover”>保存</button>
     </div>
   </div>
 </template>
@@ -104,29 +104,36 @@ export default {
         voiceControlAudio: false,
         wifiOn: true
       },
+      disabled:false,
       urlObj: {},
       url: [],
       count: 1
     }),
-    onLoad(){
-      this.imei =this.$store.state.deviceInfo.imei
+    onLoad(options){
+      console.log(options.imei)
+      this.imei = options.imei
+      // this.imei = this.$store.state.deviceInfo.imei
       this.getDeviceInfo();
     },
     methods:{
       async getDeviceInfo(){
-          let result = await this.$http.deviceGet({'imei':this.imei })
-          if(result && result.data){
-              this.deviceInfo = result.data;
-          }
+        const { success, data, msg }  = await this.$http.deviceGet({'imei':this.imei })
+        if(!success){
+          return wx.showToast({ title: msg, icon: 'none' })
+        }
+        if(data){
+          this.deviceInfo = data;
+        }
       },
       unbindEvent(){
+        const that = this
         wx.showModal({
           title: '',
           content: '请确认是否解绑？',
           success: (res) => {
             if (res.confirm) {
                 console.log('用户点击确定')
-                this.unbind();
+                that.unbind();
             } else if (res.cancel) {
                 console.log('用户点击取消')
             }
@@ -134,31 +141,30 @@ export default {
         })
       },
       async unbind(){
-        console.log(11)
-        let result = await this.$http.deviceUnBind({'imei':this.imei })
-        console.log(result)
-        if(result){
-            // this.deviceInfo = result.data;
+        const { success, data, msg } = await this.$http.deviceUnBind({'imei':this.imei })
+        if(success){
           wx.showToast({
-              title: '解绑设备成功',
-              icon: 'success',
-              duration: 2000
+            title: '解绑设备成功',
+            icon: 'none'
           })
         }
       },
-      async reset(){
-          let result = await this.$http.deviceUpdate({'imei':this.imei })
-          if(result && result.data){
-              // this.deviceInfo = result.data;
-              wx.showToast({
-                  title: '重启设备成功',
-                  icon: 'success',
-                  duration: 2000
-              })
+      async save(){
+        console.log({'imei':this.imei, babyName: this.deviceInfo.babyName})
+        this.disabled = true
+          const { success, data, msg }  = await this.$http.deviceUpdate(
+            {imei:this.imei,
+             babyName: this.deviceInfo.babyName,
+             babyAvatar:this.deviceInfo.babyAvatar
+            })
+          if(!success){
+            this.disabled = false
+            return wx.showToast({ title: msg, icon: 'none' })
           }
-      },
-      imgChange(){
-          wx.previewImage({ current: `${this.urlHeader}${src}`, urls: this.showFileList })
+          if(data){
+            this.disabled = false
+            return wx.showToast({ title: '修改成功', icon: 'none' })
+          }
       },
       async uploadImage() {
         let chooseRes = { errno: 3021 }
@@ -179,36 +185,47 @@ export default {
         }
         const path = chooseRes.tempFilePaths[0]
         console.log(11,path)
-        this.deviceInfo.babyAvatar =  path
+        // this.deviceInfo.babyAvatar =  path
         const res = await this.upload(path)
         if (res.errno !== 0) {
-            this.toast('warning', '上传异常')
-            return
+          this.toast('warning', '上传异常')
+          return
         }
         console.log(res)
         // this.deviceInfo.babyAvatar =  path
-        this.$emit('on-upload-event', { src: res.data.url, name: res.data.name, index: this.url.key })
+        // this.$emit('on-upload-event', { src: res.data.url, name: res.data.name, index: this.url.key })
       },
       async upload(filePath) {
-        console.log(222,filePath)
-        let res = {}
+        // let fileData = {}
+        const that = this
         try {
-            res = await wx.uploadFile({
-                url: "http://api.youshusoft.com/gpsserver/api/file/img/upload",
-                filePath: filePath,
-                name: "img"
-            })
-            console.log(33,res)
+          wx.uploadFile({
+            url: that.$store.state.filePath,
+            filePath: filePath,
+            name: "file",
+            header: { 
+              'Content-Type': 'multipart/form-data',
+              // 'Authorization': wx.getStorageSync("access_token"),  //如果需要token的话要传
+            },
+            success(res){
+              console.log(res)
+              const fileData = JSON.parse(res.data)
+              console.log(fileData)
+              that.deviceInfo.babyAvatar = fileData.data
+
+            }
+          })
         } catch (e) {
-            res = { data: { errno: 1 } }
+          console.log(e)
         }
+
         if (res.data && res.data.errno === 1) {
             return res.data
         }
         try {
             res.data = JSON.parse(res.data)
         } catch (e) {
-            res = { data: { errno: 1 } }
+            // res = { data: { errno: 1 } }
         }
         return res.data
       }
@@ -273,7 +290,13 @@ export default {
           &:nth-child(1){
             display: inline-block;
             width: 100rpx;
+            vertical-align:top;
           }
+        }
+        .namd_text{
+          display: inline-block;
+          height: 90rpx;
+          line-height: 90rpx;
         }
       }
     }
@@ -299,6 +322,12 @@ export default {
       height: 160rpx;
       width: 160rpx;
       border-radius: 50%;
+    }
+    .photo_img{
+      height: 60rpx;
+      width: 60rpx;
+      margin-left: 100rpx;
+
     }
   }
 </style>

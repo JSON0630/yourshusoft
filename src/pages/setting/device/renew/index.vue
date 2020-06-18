@@ -5,7 +5,11 @@
     </div>
     <div class="device_info">
       <div>
-        <p>{{info.babyName}}（{{info.effectiveTimeStr}}到期）</p>
+        <p>
+          {{info.babyName}}
+          <span v-if="type == 1">({{info.effectiveTimeStr}}到期)</span>
+           <span v-else>(短信剩余：{{info.smsAmount}})</span>
+          </p>
         <p>IMEI:{{info.imei}}</p>
       </div>
       <div class="person_box">
@@ -21,21 +25,18 @@
           <p>{{x.name}}</p>
           <p>{{x.priceName}}</p>
         </span>
-        <!-- <span class="chongzhi_price_checked">
-          <p>200M</p>
-          <p>8元</p>
-        </span> -->
       </div>
     </div>
     <div class="device_wechat">
       <img class="wechat_img" src="/static/resources/setting/wechat.png"/>
       <span>微信支付</span>
       <label class="checkbox device_radio">
-        <checkbox class="" value="cb" checked="true"/>
+        <switch :checked="isWechat" @change="handleChange" color="#4388FF" type="checkbox"/>
+
       </label>
     </div>
     <div class="btn_box">
-      <button type="" :disabled="disabled" :loading=loading hover-class=“button-hover”>确认支付</button>
+      <button type=""  @click="payChange" :disabled="disabled" :loading=disabled hover-class=“button-hover”>确认支付</button>
     </div>
   </div>
 </template>
@@ -51,36 +52,36 @@ export default {
       id: '',
       imei:'',
       info: {},
-      animal: '微信',
-      disabled: false,
-      loading: false
+      code: '',
+      isWechat: true,
+      // payList:[{value: true, name: '微信', checked: true}],
+      disabled: false
     }
   },
   onLoad(options){
     console.log(options.imei)
     this.imei = options.imei
+    // this.imei = this.$store.state.deviceInfo.imei
     this.getPayList();
     this.getDeviceInfo();
   },
-  // onLoad (options) {
-  //   this.imei = options.imei
-  // },
   methods: {
     async getDeviceInfo(){
-      let result = await this.$http.deviceGet({'imei':this.imei })
-      if(result && result.data){
-        this.info = result.data
+      let { success, data, msg } = await this.$http.deviceGet({'imei':this.imei })
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      if(data){
+        this.info = data
       }
     },
     async getPayList(){
-      let result = await this.$http.payRechargeList()
-      if(result && result.data){
-        this.list = result.data;
+      let { success, data, msg } = await this.$http.payRechargeList()
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      if(data){
+        this.list =data;
         this.list1 = this.list.filter((item)=>{
           return item.type == this.type
         })
         this.id = this.list1[0].id
-        console.log(this.list,this.list1)
       }
     },
     changeType(x){
@@ -91,19 +92,59 @@ export default {
       this.id = this.list1[0].id
     },
     checkPrice(x){
-      console.log(x)
-      console.log(this.id)
       this.id = x.id
-      console.log(x.id)
-      console.log(this.id) 
-      console.log(this.id == x.id)
       },
-    handleChange(){
-
+    handleChange(e){
+      console.log(e)
+      this.isWechat = e.target.value
     },
-    handleAnimalChange(){
-
+    payChange(){
+      let that = this
+      if(!this.isWechat){
+        return wx.showToast({ title: '请选择微信支付', icon: 'none' })
+      }
+      wx.login({
+        success: res=>{
+          this.pay({
+            rechargeId: that.id, 
+            imei: that.imei,
+            tradeType:'JSAPI',
+            appId: that.$store.state.appId,
+            code: res.code
+          })
+        }
+      });     
+    },
+    async pay(obj){
+      const that = this
+      this.disabled = true
+       const { success, data, msg } = await this.$http.payRechargePayWx(obj)
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      if(data && data.payInfo){
+         wx.requestPayment({
+          appid: data.payInfo.appid,
+          timeStamp: data.payInfo.timestamp,
+          nonceStr: data.payInfo.noncestr,
+          package: `prepay_id=${data.payInfo.prepayid}`,
+          signType: 'MD5',
+          paySign: data.payInfo.sign,
+          prepayid: data.payInfo.prepayid,
+          success:function(res){
+            that.getDeviceInfo();
+            that.disabled = false
+          },
+          fail:function(res){
+            console.log(res)
+            that.disabled = false
+            wx.showToast({ title: '支付失败', icon: 'none' })
+          },
+          complete:function(res){
+            console.log(res)
+          }
+        })
+      }
     }
+      
   }
 };
 </script>
@@ -137,7 +178,7 @@ export default {
       background: #fff;
       padding: 40rpx;
       color: #000;
-      font-size: 24rpx;
+      font-size: 28rpx;
       margin-top: 30rpx;
       >.person_box{
         position: absolute;
@@ -153,14 +194,14 @@ export default {
     .device_chongzhi{
       background: #fff;
       padding: 40rpx;
-      font-size: 24rpx;
+      font-size: 34rpx;
       .chongzhi_text{
         margin-bottom: 60rpx;
       }
       .chongzhi_price{
+        display: flex;
         >span{
-          display: inline-block;
-          width: 22%;
+          flex: 1;
           height: 100rpx;
           padding: 10rpx 0;
           line-height: 48rpx;
@@ -170,6 +211,7 @@ export default {
           margin-right: 18rpx;
           color: #4388FF;
           margin-bottom: 10rpx;
+          font-size: 28rpx;
         }
         .chongzhi_price_checked{
           background: #4388FF;
@@ -180,10 +222,10 @@ export default {
     .device_wechat{
       background: #fff;
       margin-top: 30rpx;
-      height: 90rpx;
+      height: 120rpx;
       line-height: 90rpx;
       padding: 20rpx 40rpx;
-      font-size: 24rpx;
+      font-size: 28rpx;
       >span{
         display: inline-block;
         height: 90rpx;
@@ -203,9 +245,12 @@ export default {
       >button{
         background: #4388FF;
         width: 80%;
+        height: 90rpx;
+        line-height: 90rpx;
         color: #fff;
         border: none;
         border-radius: 10rpx;
+        font-size: 30rpx;
       }
     }
     .person_img{
