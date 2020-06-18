@@ -23,7 +23,8 @@
       </p>
       <p class="edit_p">
         <span>名称</span>
-        <span>{{deviceInfo.babyName}}</span>
+        <span> <input class="search_text" type="text" @confirm="search" v-model="deviceInfo.babyName" placeholder="请输入名称"/></span>
+        <!-- <span>{{deviceInfo.babyName}}</span> -->
       </p>
       <p class="edit_p">
         <span>ICCID</span>
@@ -31,7 +32,7 @@
       </p>
     </div>
     <div class="btn_box" @click="resetEvent">
-      <button type="" :disabled="disabled" :loading=loading hover-class=“button-hover”>重启设备</button>
+      <button @click="save" type="" :disabled="disabled" :loading=loading hover-class=“button-hover”>保存</button>
     </div>
   </div>
 </template>
@@ -41,73 +42,73 @@ export default {
     data: () => ({
       'imei': '',
       deviceInfo: {
-          agent: 1,
-          area: null,
-          babyAvatar: "",
-          babyBirthday: null,
-          babyGrade: null,
-          babyName: "",
-          babySex: null,
-          bindTime: 0,
-          createTime: 0,
-          deviceMobile: null,
-          displacementAlarm: 3,
-          displacementAppNotice: true,
-          displacementSmsNotice: true,
-          dormancyEndTime: "00:00",
-          dormancyOn: false,
-          dormancyStartTime: "00:00",
-          effectiveTime: 0,
-          effectiveTimeStr: "0",
-          electricity: 95,
-          electricityAlarm: 2,
-          electricityAppNotice: true,
-          electricitySmsNotice: false,
-          electricityUpdateTime: 0,
-          fenceAppNotice: true,
-          fenceOn: 3,
-          fenceSmsNotice: true,
-          gpsOn: true,
-          iccid: "0",
-          imei: "0",
-          lastActivityTime: 0,
-          lbsOn: false,
-          ledOn: false,
-          monitorMobile1: "0",
-          monitorMobile2: "0",
-          neverCloseGps: true,
-          neverSleep: false,
-          offlineAlarm: 3,
-          online: false,
-          powerFullTime: 0,
-          powerOffAlarm: 3,
-          powerOffAppNotice: true,
-          powerOffSmsNotice: true,
-          powerSaving: false,
-          pushSwitch: false,
-          refreshTime: 10,
-          shutdownEndTime: "00:00",
-          shutdownOn: true,
-          shutdownStartTime: "00:00",
-          signal: 95,
-          smsAmount: 10,
-          sosAlarm: 3,
-          sosMobile: "0",
-          timeZone: null,
-          tremorAlarm: 2,
-          tremorAppNotice: true,
-          tremorSmsNotice: false,
-          type: 0,
-          userId: null,
-          version: "",
-          voiceControlAudio: false,
-          wifiOn: true
+        agent: 1,
+        area: null,
+        babyAvatar: "",
+        babyBirthday: null,
+        babyGrade: null,
+        babyName: "",
+        babySex: null,
+        bindTime: 0,
+        createTime: 0,
+        deviceMobile: null,
+        displacementAlarm: 3,
+        displacementAppNotice: true,
+        displacementSmsNotice: true,
+        dormancyEndTime: "00:00",
+        dormancyOn: false,
+        dormancyStartTime: "00:00",
+        effectiveTime: 0,
+        effectiveTimeStr: "0",
+        electricity: 95,
+        electricityAlarm: 2,
+        electricityAppNotice: true,
+        electricitySmsNotice: false,
+        electricityUpdateTime: 0,
+        fenceAppNotice: true,
+        fenceOn: 3,
+        fenceSmsNotice: true,
+        gpsOn: true,
+        iccid: "0",
+        imei: "0",
+        lastActivityTime: 0,
+        lbsOn: false,
+        ledOn: false,
+        monitorMobile1: "0",
+        monitorMobile2: "0",
+        neverCloseGps: true,
+        neverSleep: false,
+        offlineAlarm: 3,
+        online: false,
+        powerFullTime: 0,
+        powerOffAlarm: 3,
+        powerOffAppNotice: true,
+        powerOffSmsNotice: true,
+        powerSaving: false,
+        pushSwitch: false,
+        refreshTime: 10,
+        shutdownEndTime: "00:00",
+        shutdownOn: true,
+        shutdownStartTime: "00:00",
+        signal: 95,
+        smsAmount: 10,
+        sosAlarm: 3,
+        sosMobile: "0",
+        timeZone: null,
+        tremorAlarm: 2,
+        tremorAppNotice: true,
+        tremorSmsNotice: false,
+        type: 0,
+        userId: null,
+        version: "",
+        voiceControlAudio: false,
+        wifiOn: true
       },
       urlObj: {},
       url: [],
       count: 1
     }),
-    mounted(){
+    onLoad(){
       this.imei =this.$store.state.deviceInfo.imei
       this.getDeviceInfo();
     },
@@ -119,48 +120,34 @@ export default {
           }
       },
       unbindEvent(){
-          wx.showModal({
-              title: '',
-              content: '请确认是否解绑？',
-              success: (res) => {
-                  if (res.confirm) {
-                      console.log('用户点击确定')
-                      this.unbind();
-                  } else if (res.cancel) {
-                      console.log('用户点击取消')
-                  }
-              }
-          })
+        wx.showModal({
+          title: '',
+          content: '请确认是否解绑？',
+          success: (res) => {
+            if (res.confirm) {
+                console.log('用户点击确定')
+                this.unbind();
+            } else if (res.cancel) {
+                console.log('用户点击取消')
+            }
+          }
+        })
       },
       async unbind(){
-          console.log(11)
-          let result = await this.$http.deviceUnBind({'imei':this.imei })
-          console.log(result)
-          if(result){
-              // this.deviceInfo = result.data;
-              wx.showToast({
-                  title: '重启设备成功',
-                  icon: 'success',
-                  duration: 2000
-              })
-          }
-      },
-      resetEvent(){
-          wx.showModal({
-              title: '',
-              content: '请确认是否重启设备？',
-              success : (res) => {
-                  if (res.confirm) {
-                      console.log('用户点击确定')
-                      // this.reset();
-                  } else if (res.cancel) {
-                      console.log('用户点击取消')
-                  }
-              }
+        console.log(11)
+        let result = await this.$http.deviceUnBind({'imei':this.imei })
+        console.log(result)
+        if(result){
+            // this.deviceInfo = result.data;
+          wx.showToast({
+              title: '解绑设备成功',
+              icon: 'success',
+              duration: 2000
           })
+        }
       },
       async reset(){
-          let result = await this.$http.deviceRestart({'imei':this.imei })
+          let result = await this.$http.deviceUpdate({'imei':this.imei })
           if(result && result.data){
               // this.deviceInfo = result.data;
               wx.showToast({
@@ -245,7 +232,7 @@ export default {
       text-align: center;
       color: #fff;
       width: 100%;
-      font-size: 24rpx;
+      font-size: 30rpx;
       .jiebang{
         position: absolute;
         top: 0;
@@ -276,7 +263,7 @@ export default {
     }
     .edit_box{
       background: #fff;
-      font-size: 24rpx;
+      font-size: 30rpx;
       .edit_p{
         padding: 0 20rpx;
         height: 90rpx;

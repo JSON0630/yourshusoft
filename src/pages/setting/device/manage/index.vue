@@ -2,7 +2,7 @@
   <div class="device_list">
     <div class="device_fixed">
        <div class="device_tab">
-      <span @click="changeTabs(x,key)" v-for="(x,key) in tabsList" :key=key :class="keyIndex == key?'device_checked':''">{{x.name}}</span>
+      <span @click="changeTabs(x,key)" v-for="(x,key) in tabsList" :key=key :class="keyIndex == x.value?'device_checked':''">{{x.name}}</span>
     </div>
     <div class="search_box">
       <div class="search">
@@ -13,9 +13,10 @@
     </div>
     </div>
    
-    <scroll-view scroll-y class="device_box"  @bindscrolltolower="loadMore">
+    <scroll-view scroll-y class="device_box">
       <div></div>
       <template v-if="list.length>0">
+        <!-- <p>{{list.toString()}}</p> -->
         <div class="device_item" v-for="(x,key) in list" :key=key>
          <div class="device_item_top">
           <img class="device_person" :src="x.babyAvatar?x.babyAvatar:'/static/resources/setting/person.png'"/>
@@ -64,46 +65,69 @@
     data () {
       return {
         current: 3,
-        keyIndex:0,
-        deviceName:'',
-        list: [{
-          location: {}
-        }],
+        keyIndex: '0',
+        deviceName:'', 
+        page: 1,
+        list: [],
         tabsList:[
-          {name:'全部',valvue: 0,checked: true},
-          {name:'在线',valvue: 1,checked: false},
-          {name:'离线',valvue: 2,checked: false}
+          {name:'全部',value: 0,checked: true},
+          {name:'在线',value: 1,checked: false},
+          {name:'离线',value: 2,checked: false}
         ]
       }
     },
-    mounted(){
+    onLoad(){
+      this.list = []
       this.getDeviceList({
         type: this.keyIndex,
         size: 10,
-        number:'',
+        number: this.page,
         keyword: ''
-      })
+      }) 
     },
+    // mounted(){
+    //   this.getDeviceList({
+    //     type: this.keyIndex,
+    //     size: 10,
+    //     number: this.page,
+    //     keyword: ''
+    //   })
+    // },
     methods: {
       async getDeviceList(data){
+         wx.showToast({
+          title: '加载中...',
+          icon: 'loading',
+          duration: 1000
+        })
         let result = await this.$http.deviceList(data)
         if(result && result.data){
-          this.list = result.data.dataList
+          this.list = this.list.concat(result.data.dataList)
         }
         console.log(this.list)
       },
       changeTabs(x,key){
-        this.keyIndex = key
+        console.log(x)
+        console.log(this.keyIndex) 
+        this.keyIndex =x.value
+        console.log(x.value == this.keyIndex )
+        console.log(this.keyIndex)
+      //  this.$set('this.keyIndex',x.value) 
+      //  this.keyIndex = x.valvue
+        this.page = 1
+        this.list = []
         this.getDeviceList({
             type: this.keyIndex,
             size: 10,
-            number: 1,
+            number: this.page,
             keyword: ''
           }
         );
       },
       search(){
         console.log(this.deviceName)
+        this.page = 1
+        this.list = []
         this.getDeviceList({
             type: this.keyIndex,
             size: 10,
@@ -114,6 +138,8 @@
       },
       cancelText(){
         this.deviceName = ''
+        this.page = 1
+        this.list = []
         this.getDeviceList({
             type: this.keyIndex,
             size: 10,
@@ -195,10 +221,28 @@
           })
         }
       },
-      loadMore(){
-        console.log(11)
-        this.getDeviceList()
-      }
+      // onReachBottom(){
+      //   console.log(11)
+      //   console.log('dibu')
+      //   // this.getDeviceList()
+      // }
+    },
+    onReachBottom(){
+      console.log(11)
+      console.log('dibu')
+      this.page++
+      //  wx.showToast({
+      //   title: '加载中...',
+      //   icon: 'loading',
+      //   duration: 1000
+      // })
+      this.getDeviceList({
+          type: this.keyIndex,
+          size: 10,
+          number: this.page,
+          keyword: this.deviceName
+        }
+      );
     }
   };
 </script>
@@ -206,6 +250,7 @@
 <style lang="less" scoped>
 .device_list{
   position: relative;
+  height: 100%;
   background: #fff;
   .device_fixed{
     position: fixed;
@@ -219,6 +264,7 @@
     height: 90rpx;
     line-height: 90rpx;
     text-align: center;
+    font-size: 28rpx;
     color: #000;
     >span{
       display: inline-block;
@@ -249,7 +295,7 @@
         line-height: 80rpx;
         padding-left: 40rpx;
         padding-right: 60rpx;
-        font-size: 25rpx;
+        font-size: 30rpx;
         border: none;
 
       }
@@ -311,7 +357,7 @@
     p{
       display: inline-block;
       color: #878B8E;
-      font-size: 20rpx;
+      font-size: 26rpx;
       >img{
         margin-right: 8rpx;
       }
