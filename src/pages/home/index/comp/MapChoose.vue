@@ -86,13 +86,15 @@ export default {
         .img_label {
           border-color: #4c8eff;
           &::after {
-            content: '✔';
+            content: '✓';
             text-align: center;
-            color: #fff;
+            color: white;
             position: absolute;
             bottom: 0;
             left: 0;
+            font-size: 38rpx;
             height: 45rpx;
+            line-height: 45rpx;
             width: 100%;
             background: #4c8eff;
           }

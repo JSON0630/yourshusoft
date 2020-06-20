@@ -26,8 +26,10 @@ export default {
   components: { ThirdLogin },
   data: () => ({
     keys: {
-      mobile: '18222664400',
-      smsCode: '20200125'
+      mobile: '',
+      smsCode: ''
+      // mobile: '18222664400',
+      // smsCode: '20200125'
     },
     time: 0
   }),
