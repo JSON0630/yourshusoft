@@ -11,7 +11,7 @@
       <div class="flex">
         <div class="info_item">
           <div>时间：{{ recordLast.date }}</div>
-          <div>通讯：{{recordLast.activityTime}}</div>
+          <div>通讯：{{ recordLast.activityTime }}</div>
         </div>
         <div>
           <div>信号：{{ recordLast.signal }}</div>
@@ -24,7 +24,7 @@
       </div>
       <div class="flex mt-8">
         <div class="info_item">
-          <div>速度：{{ recordLast.speed || 0 }}</div>
+          <div>速度：{{ recordLast.speed }}</div>
           <div>经度：{{ recordLast.lng }}</div>
           <div>温度：{{ recordLast.temperature || '无' }}</div>
         </div>
@@ -97,7 +97,9 @@ export default {
   .address {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     font-size: 28rpx;
+    width: 100%;
   }
   .more_info {
     position: relative;

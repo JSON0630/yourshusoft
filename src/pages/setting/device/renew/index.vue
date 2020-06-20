@@ -61,7 +61,6 @@ export default {
   onLoad(options){
     console.log(options.imei)
     this.imei = options.imei
-    // this.imei = this.$store.state.deviceInfo.imei
     this.getPayList();
     this.getDeviceInfo();
   },
@@ -109,7 +108,6 @@ export default {
             rechargeId: that.id, 
             imei: that.imei,
             tradeType:'JSAPI',
-            appId: that.$store.state.appId,
             code: res.code
           })
         }

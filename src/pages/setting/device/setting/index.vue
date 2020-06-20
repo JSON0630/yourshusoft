@@ -105,7 +105,6 @@
     onLoad (options) {
       console.log(options)
       this.imei = options.imei|| this.$store.state.imei
-      // this.imei = this.$store.state.deviceInfo.imei
     },
     methods: {
       async getDeviceInfo(){

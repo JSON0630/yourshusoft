@@ -1,6 +1,6 @@
 <template>
   <block>
-    <div class="DateBtn" @click="showDrawer=true">{{date}}</div>
+    <div class="DateBtn" @click="showDrawer=true">{{date || '搜索中...'}}</div>
     <Drawer v-model="showDrawer" from="bottom">
       <div class="SearchOptions">
         <div class="item">
@@ -9,7 +9,7 @@
             <button>{{innerDate}}</button>
           </picker>
         </div>
-        <div class="item time">
+        <div class="item">
           <div class="name">时间段:</div>
           <picker mode="time" :value="startHour" @change="handleStartHourChange">
             <button>{{startHour}}</button>
@@ -35,7 +35,7 @@
           <div class="name">智能纠偏:</div>
           <switch :checked="rectify" @change="rectifyChange"/>
         </div>
-        <button type="primary" @click="submit">查询</button>
+        <button class="submit" type="primary" @click="submit">查询</button>
       </div>
     </Drawer>
   </block>
@@ -86,6 +86,7 @@ export default {
       this.endHour = e.target.value
     },
     submit () {
+      this.showDrawer = false
       this.$emit('submit', {
         dataTypeList: this.dataTypeList.slice(),
         rectify: this.rectify,
@@ -120,11 +121,8 @@ export default {
     display: flex;
     align-items: center;
     padding: 30rpx 10rpx;
-    &.time {
-      height: 100rpx;
-      .split {
-        margin: 0 20rpx;
-      }
+    .split {
+      margin: 0 20rpx;
     }
     button {
       line-height: 2;
@@ -140,7 +138,7 @@ export default {
       }
     }
   }
-  button {
+  .submit {
     margin: 50rpx auto 60rpx;
   }
 }

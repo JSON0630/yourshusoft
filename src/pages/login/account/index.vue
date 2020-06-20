@@ -43,7 +43,7 @@ export default {
       if (!success) {
         return wx.showToast({ title: msg, icon: 'none' })
       }
-      this.update({userInfo: data})
+      wx.setStorageSync('USER_NAME', data.userName)
       wx.setStorageSync('TOKEN', data.token)
       wx.navigateTo({url: '/pages/home/index/main'})
     }

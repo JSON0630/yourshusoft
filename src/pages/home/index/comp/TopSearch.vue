@@ -2,7 +2,7 @@
   <block>
     <div class="TopSearch" v-if="!showSelect">
       <navigator url="/pages/setting/index/main">
-        <img class="img_avatar" :src="currentDevice.avatar || currentDevice.babyAvatar" />
+        <img class="img_avatar" :src="currentDevice.avatar || currentDevice.babyAvatar || '/static/resources/login/user.png'" />
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { debounce } from '@/utils'
 
 export default {
@@ -46,9 +45,6 @@ export default {
     search: '',
     showSelect: false
   }),
-  computed: {
-    ...mapState(['userInfo'])
-  },
   watch: {
     currentDevice (obj) {
       this.search = obj.name || obj.babyName

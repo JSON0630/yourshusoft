@@ -5,24 +5,7 @@ import { deepCopy } from '@/utils'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-  getters: {
-    userInfo: state => state.userInfo
-  },
   state: {
-    userInfo: {
-      token: '',
-      type: 0,
-      userId: '',
-      userName: '',
-      avatarUrl: '/static/resources/login/user.png'
-    },
-    deviceInfo: {
-      imei: '',
-      lng: '113.3245211',
-      lat: '23.10229'
-    },
-    filePath:'https://api.youshusoft.com/gpsserver/api/file/img/upload',
-    appId:'wx830de8b9fe1b325d',
     imei: ''
   },
   mutations: {

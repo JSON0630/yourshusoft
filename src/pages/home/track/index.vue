@@ -9,12 +9,12 @@
     />
     <SearchOptions :date="date" @submit="trackRecordList"/>
     <div class="bottom">
-      <div class="media_btn">
+      <!-- <div class="media_btn">
         <img class="img_m_left" src="/static/resources/home/m_left.png" alt="">
         <img class="img_m_pause" src="/static/resources/home/m_pause.png" alt="">
         <img class="img_m_right" src="/static/resources/home/m_right.png" alt="">
         <button class="btn">快</button>
-      </div>
+      </div> -->
       <div class="info">
         <div class="address">
           <div class="text">{{ recordLast.address }}</div>

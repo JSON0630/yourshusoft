@@ -112,7 +112,6 @@ export default {
     onLoad(options){
       console.log(options.imei)
       this.imei = options.imei || this.$store.state.imei
-      // this.imei = this.$store.state.deviceInfo.imei
       this.getDeviceInfo();
     },
     methods:{
@@ -200,8 +199,8 @@ export default {
         const that = this
         try {
           wx.uploadFile({
-            url: that.$store.state.filePath,
-            filePath: filePath,
+            url: 'https://api.youshusoft.com/gpsserver/api/file/img/upload',
+            filePath,
             name: "file",
             header: { 
               'Content-Type': 'multipart/form-data',

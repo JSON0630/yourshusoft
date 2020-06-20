@@ -17,28 +17,28 @@ export default {
   methods: {
     ...mapMutations(['update']),
     login () {
-      // 登录
       wx.login({
         success: async res => {
-          const { success, data } = await this.$http.userWxMiniappLogin({ appid: '', code: res.code })
-          if (!success) { return wx.showToast({ title: '登录失败，请稍后再试', icon: 'none' }) }
+          const { success, data, msg } = await this.$http.userWxMiniappLogin({ code: res.code })
+          if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+          wx.setStorageSync('USER_NAME', data.userName)
           wx.setStorageSync('TOKEN', data.token)
           wx.setStorageSync('CODE', res.code)
+          wx.navigateTo({url: '/pages/home/index/main'})
         }
       })
       // 获取用户信息
-      wx.getSetting({
-        success: res => {
-          if (res.authSetting['scope.userInfo']) {
-            wx.getUserInfo({
-              success: res => {
-                this.update({userInfo: res.userInfo})
-                wx.navigateTo({url: '/pages/home/index/main'})
-              }
-            })
-          }
-        }
-      })
+      // wx.getSetting({
+      //   success: res => {
+      //     if (res.authSetting['scope.userInfo']) {
+      //       wx.getUserInfo({
+      //         success: res => {
+      //           wx.navigateTo({url: '/pages/home/index/main'})
+      //         }
+      //       })
+      //     }
+      //   }
+      // })
     }
   }
 }

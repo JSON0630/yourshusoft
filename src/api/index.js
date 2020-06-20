@@ -1,6 +1,7 @@
 import api from './api'
 import request from './request'
 const { post } = request
+const appId = 'wx830de8b9fe1b325d'
 
 export default {
   /** AUDIO - 录音分页列表 */
@@ -60,7 +61,7 @@ export default {
   /** PAY - 充值列表 */
   payRechargeList: (data = {}) => post(api.payRechargeList, data),
   /** PAY - 微信支付 */
-  payRechargePayWx: (data = {}) => post(api.payRechargePayWx, data),
+  payRechargePayWx: (data = {}) => post(api.payRechargePayWx, {appId, ...data}),
   /** PAY - 微信支付 */
   payRechargePayWx: (data = {}) => post(api.payRechargePayWx, data),
   /** PAY - 检查是否支付成功 */
@@ -76,7 +77,7 @@ export default {
   /** TRACK - 轨迹检查 */
   trackRecordCheck: (data = {}) => post(api.trackRecordCheck, data),
   /** USER - 小程序授权登陆 */
-  userWxMiniappLogin: (data = {}) => post(api.userWxMiniappLogin, data),
+  userWxMiniappLogin: (data = {}) => post(api.userWxMiniappLogin,  {appid: appId, ...data}),
   /** USER - 手机动态码登陆 */
   userMobileLogin: (data = {}) => post(api.userMobileLogin, data),
   /** USER - 手机号码注册 */

@@ -3,7 +3,7 @@
     <div class="person_img" @click="goDeviceInfo">
       <!-- <img  class="person" src="/static/resources/setting/person.png"/> -->
       <img class="person" :src="deviceInfo.babyAvatar?deviceInfo.babyAvatar:'/static/resources/setting/person.png'" />
-      <div class="account" >{{userInfo.name?userInfo.name:'--'}}</div>
+      <div class="account" >{{ userName || '--'}}</div>
       <div class="current_shebei">当前设备<span>{{deviceInfo.babyName? deviceInfo.babyName:'--'}}</span></div>
     </div>
     <div class="setting_item" @click="onDeviceList">
@@ -29,12 +29,11 @@ import { mapMutations } from 'vuex'
     data: () => ({
       'imei': '',
       deviceInfo: {},
-      userInfo:{},
+      userName: wx.getStorageSync('USER_NAME'),
       disabled: false
     }),
     onLoad(){
       this.imei =this.$store.state.imei
-      this.userInfo = this.$store.state.userInfo
       this.getDeviceInfo();
     },
     methods: {
@@ -78,9 +77,8 @@ import { mapMutations } from 'vuex'
           })
           if(result.code == 0){
               this.disabled = false
+              wx.clearStorage()
               wx.redirectTo({url: '/pages/login/phone/main'})
-              this.update({userInfo: {}})
-              wx.setStorageSync('TOKEN', '')
           }else{
               setTimeout(function(){
                   this.disabled = false
