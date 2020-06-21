@@ -1,22 +1,22 @@
 <template>
   <block>
-    <div class="DateBtn" @click="showDrawer=true">{{date || '搜索中...'}}</div>
+    <div class="DateBtn" @click="showDrawer=true">{{ date }}</div>
     <Drawer v-model="showDrawer" from="bottom">
       <div class="SearchOptions">
         <div class="item">
           <div class="name">当前选择:</div>
-          <picker mode="date" :value="date" @change="bindDateChange">
-            <button>{{innerDate}}</button>
+          <picker mode="date" :value="innerDate" @change="bindDateChange">
+            <button>{{ innerDate }}</button>
           </picker>
         </div>
         <div class="item">
           <div class="name">时间段:</div>
           <picker mode="time" :value="startHour" @change="handleStartHourChange">
-            <button>{{startHour}}</button>
+            <button>{{ startHour }}</button>
           </picker>
           <div class="split">-</div>
           <picker mode="time" :value="endHour" @change="handleEndHourChange">
-            <button>{{endHour}}</button>
+            <button>{{ endHour }}</button>
           </picker>
           <!-- <TimeLine :startHour="startHour" :endHour="endHour" @change="handleHourChange"/> -->
         </div>
@@ -51,19 +51,21 @@ export default {
   props: {
     date: String
   },
-  data: () => ({
-    innerDate: '',
-    startHour: '00:00',
-    endHour: '23:59',
-    showDrawer: false,
-    rectify: false,
-    DATA_TYPES: [
-      { value: 1, text: 'gps', checked: true },
-      { value: 2, text: 'WIFI', checked: true },
-      { value: 3, text: '基站', checked: true }
-    ],
-    dataTypeList: []
-  }),
+  data () {
+    return {
+      innerDate: this.date,
+      startHour: '00:00',
+      endHour: '23:59',
+      showDrawer: false,
+      rectify: false,
+      DATA_TYPES: [
+        { value: 1, text: 'gps', checked: true },
+        { value: 2, text: 'WIFI', checked: true },
+        { value: 3, text: '基站', checked: true }
+      ],
+      dataTypeList: []
+    }
+  },
   watch: {
     date (v) {
       this.innerDate = v

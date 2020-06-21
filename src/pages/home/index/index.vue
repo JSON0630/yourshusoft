@@ -51,7 +51,7 @@ export default {
     MAP_TYPE () { return MAP_TYPE },
     markers () {
       return [{
-        iconPath: '/static/resources/home/point_at.png',
+        iconPath: '/static/resources/home/point_at.gif',
         longitude: this.recordLast.lng,
         latitude: this.recordLast.lat,
         width: 30,
@@ -66,6 +66,7 @@ export default {
   },
   methods: {
     ...mapMutations(['update']),
+    /** 查询设备，默认选中第一个 */
     async deviceListSimple () {
       const { success, data, msg } = await this.$http.deviceListSimple()
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
@@ -78,14 +79,17 @@ export default {
         this.deviceList = []
       }
     },
+    /** 搜索 - 选择设备 */
     handeDeviceChange (device) {
       this.currentDevice = device
       this.trackRecordLast(device.imei)
     },
+    /** 未读消息 */
     async noticeUnreadCount () {
       const { success, data } = await this.$http.noticeUnreadCount()
       if (success) { this.unreadCount = data }
     },
+    /** 设备信息 */
     async trackRecordLast (imei) {
       const { success, data, msg } = await this.$http.trackRecordLast({imei})
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
@@ -100,24 +104,20 @@ export default {
         this.update({imei: ''})
       }
     },
+    /** 搜索 */
     async handleSearch (search) {
       const { success, data, msg } = await this.$http.deviceSearch({imei: search, val: 1})
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       this.deviceList = Object.freeze(data)
     },
-    handlePos () {
-      const { address, lng, lat } = this.recordLast
-      map.moveToLocation({
-        longitude: lng,
-        latitude: lat,
-        success: () => {
-          console.log('-----success===')
-        },
-        fail: () => {
-          console.log('------fail====')
-        }
-      })
+    /** 手动定位 */
+    async handlePos () {
+      const { imei } = this.recordLast
+      const { success, msg } = await this.$http.deviceRefreshGps({imei})
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      this.trackRecordLast(imei)
     },
+    /** 导航 */
     handleDaohang () {
       const { address, lng, lat } = this.recordLast
       const { name, babyName } = this.currentDevice

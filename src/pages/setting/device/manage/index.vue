@@ -2,7 +2,12 @@
   <div class="device_list">
     <div class="device_fixed">
        <div class="device_tab">
-      <span @click="changeTabs(x,key)" v-for="(x,key) in tabsList" :key=key :class="keyIndex == x.value?'device_checked':''">{{x.name}}</span>
+      <span
+        @click="changeTabs(x,key)"
+        v-for="(x,key) in tabsList"
+        :key=key
+        :class="keyIndex == key ? 'device_checked':''"
+      >{{ x.name }}({{ x.count }})</span>
     </div>
     <div class="search_box">
       <div class="search">
@@ -14,7 +19,7 @@
     </div>
    
     <scroll-view scroll-y class="device_box"> 
-        <div v-if="list.length>0">
+        <div v-if="!loading && list.length>0">
           <div class="device_item" v-for="(x,key) in list" :key=key>
             <div class="device_item_top">
               <img class="device_person" :src="x.babyAvatar?x.babyAvatar:'/static/resources/setting/person.png'"/>
@@ -24,12 +29,8 @@
                     <span :class="x.online?'online': 'offline'"> 
                       {{x.online?'在线':'离线'}}
                     </span>
-                  <span class="device_batteray_span"> 
-                    <img  v-if='x.electricity<5' class="device_batteray" src="/static/resources/setting/batteray_0.png"/>
-                    <img v-else-if='x.electricity>90' class="device_batteray" src="/static/resources/setting/batteray_100.png"/>
-                    <img v-else-if='(x.electricity<90)&&(x.electricity>60)' class="device_batteray" src="/static/resources/setting/batteray_75.png"/>
-                       <img v-else-if='(x.electricity<60)&&(x.electricity>30)' class="device_batteray" src="/static/resources/setting/batteray_50.png"/>
-                    <img v-else class="device_batteray" src="/static/resources/setting/batteray_30.png"/>
+                  <span class="device_batteray_span">
+                    <Electricity :electricity="x.electricity" />
                     <i style="display:inline-block;width:60rpx;text-algin:left;">{{x.electricity }}%</i>
                     </span>
                 </p>
@@ -63,18 +64,33 @@
 </template>
 
 <script>
+import Electricity from '@/pages/public/Electricity.vue'
+
   export default {
+    components: {
+      Electricity
+    },
     data () {
       return {
+        loading: true,
         current: 3,
         keyIndex: '0',
         deviceName:'', 
         page: 1,
         list: [],
-        tabsList:[
-          {name:'全部',value: 0,checked: true},
-          {name:'在线',value: 1,checked: false},
-          {name:'离线',value: 2,checked: false}
+        listInfo: {
+          allTotal: 0,
+          onlineTotal: 0
+        }
+      }
+    },
+    computed: {
+      tabsList () {
+        const { allTotal, onlineTotal } = this.listInfo
+        return [
+          { name:'全部', count: allTotal },
+          { name:'在线', count: onlineTotal },
+          { name:'离线', count: allTotal - onlineTotal }
         ]
       }
     },
@@ -85,19 +101,16 @@
         size: 10,
         number: this.page,
         keyword: ''
-      }) 
+      })
     },
     methods: {
       async getDeviceList(obj){
-         wx.showToast({
-          title: '加载中...',
-          icon: 'loading',
-          duration: 1000
-        })
+        wx.showToast({ title: '加载中...', icon: 'loading', duration: 3000 })
         const { success, data, msg }  = await this.$http.deviceList(obj)
-        if(!success){
-          return wx.showToast({ title: msg, icon: 'none' })
-        }
+        this.loading = false
+        wx.hideToast()
+        if(!success){ return wx.showToast({ title: msg, icon: 'none' }) }
+        this.listInfo = { allTotal: data.allTotal, onlineTotal: data.onlineTotal }
         if (!data.dataList.length) { return wx.showToast({ title: '暂无设备', icon: 'none' }) }
         this.list = Object.freeze(this.list.concat(data.dataList))
         console.log(this.list,'list')
@@ -338,9 +351,7 @@
     width: 36rpx;
     margin-top: 22rpx;
   }
-  .device_batteray{
-    height: 20rpx;
-    width: 35rpx;
+  /deep/.device_batteray{
     margin-right: 10rpx;
   }
   .device_guiji,.device_set,.device_dingwei{

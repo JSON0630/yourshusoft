@@ -18,7 +18,7 @@
           <div>卫星：{{ recordLast.satellite}}</div>
         </div>
         <div class="battery_wrap">
-          <div class="battery">电池</div>
+          <Electricity :electricity="recordLast.electricity" />
           <div class="percent">{{ recordLast.electricity }}%</div>
         </div>
       </div>
@@ -44,8 +44,12 @@
 
 <script>
 import { formatTime } from '@/utils'
+import Electricity from '@/pages/public/Electricity.vue'
 
 export default {
+  components: {
+    Electricity
+  },
   props: {
     recordLast: Object
   },

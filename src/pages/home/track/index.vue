@@ -38,6 +38,7 @@ export default {
   components: { SearchOptions },
   data: () => ({
     date: '',
+    deviceImei: '',
     recordLast: {},
     trackList: [],
     points: [],
@@ -64,32 +65,39 @@ export default {
       }))
     }
   },
-  mounted () {
+  onLoad (options) {
+    console.log(options.imei)
+    this.deviceImei = options.imei || this.imei
     this.trackRecordLast()
-    this.trackRecordCheck()
+    // this.trackRecordCheck()
+    this.trackRecordList({
+      dataTypeList: [1, 2, 3],
+      rectify: false,
+      date: formatTime(Date.now(), 'yyyy-MM-dd')
+    })
   },
   methods: {
     async trackRecordLast () {
-      const { success, data, msg } = await this.$http.trackRecordLast({imei: this.imei})
+      const { success, data, msg } = await this.$http.trackRecordLast({imei: this.deviceImei})
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       this.recordLast = data
     },
-    async trackRecordCheck () {
-      const { success, data, msg } = await this.$http.trackRecordCheck({imei: this.imei})
-      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-      if (!data.length) { return wx.showToast({ title: '无记录', icon: 'none' }) }
-      this.trackRecordList({
-        dataTypeList: [1, 2, 3],
-        rectify: false,
-        date: data[data.length - 1]
-      })
-    },
+    // async trackRecordCheck () {
+    //   const { success, data, msg } = await this.$http.trackRecordCheck({imei: this.deviceImei})
+    //   if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+    //   if (!data.length) { return wx.showToast({ title: '无轨迹记录', icon: 'none' }) }
+    //   this.trackRecordList({
+    //     dataTypeList: [1, 2, 3],
+    //     rectify: false,
+    //     date: data[data.length - 1]
+    //   })
+    // },
     async trackRecordList (params) {
       this.date = params.date
       this.startTime = formatTime(params.date, 'yyyy年MM月dd日 ') + '00:00:00'
       this.endTime = formatTime(params.date, 'yyyy年MM月dd日 ') + '23:59:59'
       const { success, data, msg } = await this.$http.trackRecordList({
-        imei: this.imei,
+        imei: this.deviceImei,
         startTime: this.startTime,
         endTime: this.endTime,
         ...params
@@ -101,7 +109,7 @@ export default {
     },
     goTrackList () {
       wx.navigateTo({
-        url: `/pages/home/trackList/main?imei=${this.imei}&startTime=${this.startTime}&endTime=${this.endTime}`
+        url: `/pages/home/trackList/main?imei=${this.deviceImei}&startTime=${this.startTime}&endTime=${this.endTime}`
       })
     }
   }
