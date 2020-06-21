@@ -59,7 +59,7 @@ export default {
     display: flex;
     padding: 30rpx;
     .left  {
-      width: 68vw;
+      width: 64vw;
       .title {
         font-size: 24rpx;
         color: #666;
@@ -76,7 +76,8 @@ export default {
     .right {
       font-size: 24rpx;
       color: #999;
-      width: 200rpx;
+      flex: 1;
+      text-align: center;
     }
   }
 }
