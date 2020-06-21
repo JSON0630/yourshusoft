@@ -56,11 +56,11 @@ export default {
     },
     markers () {
       return this.points.slice(-1).map(pos => ({
-        iconPath: '/static/resources/login/loc.png',
+        iconPath: '/static/resources/home/point_now.gif',
         ...pos,
         id: 0,
-        width: 20,
-        height: 20
+        width: 40,
+        height: 48
       }))
     }
   },

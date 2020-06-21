@@ -4,10 +4,7 @@
       id="map"
       class="home_map"
       :enable-satellite="mapType===MAP_TYPE.satellite"
-      :longitude="recordLast.lng"
-      :latitude="recordLast.lat"
-      scale="100"
-      show-location
+      :markers="markers"
       style="width: 100%; height: 100vh;"
     />
     <div class="HomeIndex">
@@ -51,7 +48,16 @@ export default {
     mapType: MAP_TYPE.standard
   }),
   computed: {
-    MAP_TYPE () { return MAP_TYPE }
+    MAP_TYPE () { return MAP_TYPE },
+    markers () {
+      return [{
+        iconPath: '/static/resources/home/point_at.png',
+        longitude: this.recordLast.lng,
+        latitude: this.recordLast.lat,
+        width: 30,
+        height: 30
+      }]
+    }
   },
   mounted () {
     map = wx.createMapContext('map')
@@ -85,6 +91,7 @@ export default {
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data) {
         this.recordLast = data
+        map.moveToLocation({longitude: data.lng, latitude: data.lat})
         this.update({imei: data.imei})
       } else {
         this.getLocation(({latitude, longitude}) => {
@@ -134,9 +141,9 @@ export default {
 </script>
 
 <style lang="less">
-.home_map {
-  position: fixed;
-}
+// .home_map {
+//   position: fixed;
+// }
 .HomeIndex {
   background: rgb(103, 187, 103);
   height: 100vh;
