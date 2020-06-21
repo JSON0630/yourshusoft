@@ -24,7 +24,7 @@ export default {
           wx.setStorageSync('USER_NAME', data.userName)
           wx.setStorageSync('TOKEN', data.token)
           wx.setStorageSync('CODE', res.code)
-          wx.navigateTo({url: '/pages/home/index/main'})
+          wx.reLaunch({url: '/pages/home/index/main'})
         }
       })
       // 获取用户信息

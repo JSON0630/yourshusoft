@@ -10,7 +10,7 @@
       show-location
       style="width: 100%; height: 100vh;"
     />
-    <div class="HomeIndex" v-if="recordLast.imei">
+    <div class="HomeIndex">
       <TopSearch
         :deviceList="deviceList"
         :currentDevice="currentDevice"
@@ -19,8 +19,8 @@
       />
       <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
       <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
-      <PopAddress :recordLast="recordLast" @onPos="handlePos" @daohang="handleDaohang"/>
-      <PosBottom />
+      <PopAddress v-if="recordLast.imei" :recordLast="recordLast" @onPos="handlePos" @daohang="handleDaohang"/>
+      <PosBottom v-if="recordLast.imei" />
     </div>
   </block>
 </template>
@@ -45,11 +45,7 @@ export default {
   },
   data: () => ({
     currentDevice: {},
-    recordLast: {
-      imei: '',
-      lng: '',
-      lat: ''
-    },
+    recordLast: { imei: '', lng: '', lat: '' },
     deviceList: [],
     unreadCount: 0,
     mapType: MAP_TYPE.standard
@@ -65,10 +61,15 @@ export default {
   methods: {
     ...mapMutations(['update']),
     async deviceListSimple () {
-      const { success, data } = await this.$http.deviceListSimple()
-      if (success && data.length) {
-        this.deviceList = Object.freeze(data.slice(0, 10))
+      const { success, data, msg } = await this.$http.deviceListSimple()
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      if (data.length) {
         this.handeDeviceChange(data[0])
+        this.deviceList = Object.freeze(data.slice(0, 10))
+      } else {
+        wx.showToast({ title: '无设备', icon: 'none' })
+        this.handeDeviceChange({})
+        this.deviceList = []
       }
     },
     handeDeviceChange (device) {
@@ -82,8 +83,15 @@ export default {
     async trackRecordLast (imei) {
       const { success, data, msg } = await this.$http.trackRecordLast({imei})
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-      this.recordLast = data
-      this.update({imei: data.imei})
+      if (data) {
+        this.recordLast = data
+        this.update({imei: data.imei})
+      } else {
+        this.getLocation(({latitude, longitude}) => {
+          this.recordLast = { imei: '', lng: longitude, lat: latitude }
+        })
+        this.update({imei: ''})
+      }
     },
     async handleSearch (search) {
       const { success, data, msg } = await this.$http.deviceSearch({imei: search, val: 1})
@@ -106,20 +114,20 @@ export default {
     handleDaohang () {
       const { address, lng, lat } = this.recordLast
       const { name, babyName } = this.currentDevice
-      wx.getLocation({
-        type: 'wgs84', // 返回可以用于wx.openLocation的经纬度，官方提示bug: iOS 6.3.30 type 参数不生效，只会返回 wgs84 类型的坐标信息  
-        success: function (res) {
-          wx.openLocation({
-            latitude: lat,
-            longitude: lng,
-            name: name || babyName,
-            address
-          })
-        }
+      this.getLocation(res => {
+        wx.openLocation({
+          latitude: lat,
+          longitude: lng,
+          name: name || babyName,
+          address
+        })
       })
     },
     handleMapTypeChange (type) {
       this.mapType = type
+    },
+    getLocation (success) {
+      wx.getLocation({ type: 'wgs84', success })
     }
   }
 };

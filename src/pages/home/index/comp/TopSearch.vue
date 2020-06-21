@@ -2,18 +2,18 @@
   <block>
     <div class="TopSearch" v-if="!showSelect">
       <navigator url="/pages/setting/index/main">
-        <img class="img_avatar" :src="currentDevice.avatar || currentDevice.babyAvatar || '/static/resources/login/user.png'" />
+        <img class="img_avatar" :src="device.avatar || '/static/resources/login/user.png'" />
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
-        <div class="name ellipsis">{{ currentDevice.name || currentDevice.babyName }}</div>
+        <div class="name ellipsis">{{ device.name }}</div>
         <img class="img_arrow_down" src="/static/resources/home/arrow_down.png" alt="">
       </div>
       <!-- <img class="img_question" src="/static/resources/home/question.png" alt=""> -->
       <img class="img_scan" src="/static/resources/home/scan.png" @click="scanCode">
     </div>
     <div class="TopSearch" v-else>
-      <input v-model="search" @input="handleInput" class="flex-1" type="text" placeholder="请输入设备名称或imei号">
+      <input :value="device.name" @input="handleInput" class="flex-1" type="text" placeholder="请输入设备名称或imei号">
       <div class="cancel" @click="showSelect=false">取消</div>
     </div>
     <div class="DeviceList" :class="{open: showSelect}">
@@ -21,7 +21,7 @@
         v-for="(x, i) in deviceList"
         :key="i"
         @click="onDeviceChange(x)"
-        :class="{active: currentDevice.imei === x.imei}"
+        :class="{active: device.imei === x.imei}"
       >
         <div class="flex-align-center">
           <img class="img_device" :src="x.avatar || x.babyAvatar" alt="">
@@ -42,12 +42,16 @@ export default {
     deviceList: Array
   },
   data: () => ({
-    search: '',
+    device: {},
     showSelect: false
   }),
   watch: {
-    currentDevice (obj) {
-      this.search = obj.name || obj.babyName
+    currentDevice (device) {
+      this.device = {
+        imei: device.imei,
+        avatar: device.avatar || device.babyAvatar,
+        name: device.name || device.babyName
+      }
     }
   },
   methods: {
@@ -67,8 +71,8 @@ export default {
       }, 300)
     },
     handleInput: debounce(function (e){
-      this.$emit('search', this.search)
-    }, 600)
+      this.$emit('search', e.target.value)
+    }, 1000)
   }
 }
 </script>

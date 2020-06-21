@@ -63,9 +63,7 @@ export default {
       }
       wx.setStorageSync('USER_NAME', data.userName)
       wx.setStorageSync('TOKEN', data.token)
-      setTimeout(() => {
-        wx.navigateTo({url: '/pages/home/index/main'})
-      })
+      wx.reLaunch({url: '/pages/home/index/main'})
     }
   }
 }

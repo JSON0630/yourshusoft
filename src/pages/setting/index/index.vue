@@ -24,69 +24,72 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-  export default {
-    data: () => ({
-      'imei': '',
-      deviceInfo: {},
-      userName: wx.getStorageSync('USER_NAME'),
-      disabled: false
-    }),
-    onLoad(){
-      this.imei =this.$store.state.imei
-      this.getDeviceInfo();
+import { mapMutations, mapState } from 'vuex'
+
+export default {
+  data: () => ({
+    deviceInfo: {},
+    userName: '',
+    disabled: false
+  }),
+  computed: {
+    ...mapState(['imei'])
+  },
+  onLoad(){
+    this.userName = wx.getStorageSync('USER_NAME')
+    this.getDeviceInfo()
+  },
+  methods: {
+    ...mapMutations(['update']),
+    async getDeviceInfo(){
+      const { success, data, msg } = await this.$http.deviceGet({imei:this.imei })
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      if (!data) { return wx.showToast({ title: '暂无信息', icon: 'none' }) }
+      this.deviceInfo = data
     },
-    methods: {
-      ...mapMutations(['update']),
-      async getDeviceInfo(){
-        const { success, data, msg } = await this.$http.deviceGet({imei:this.imei })
-        if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-        if (!data) { return wx.showToast({ title: '暂无信息', icon: 'none' }) }
-        this.deviceInfo = data
-      },
-      onDeviceList(){
-        wx.navigateTo({url: '/pages/setting/device/manage/main'})
-      },
-      onChangeEdition(){
-          wx.navigateTo({url: '/pages/setting/edition/main'})
-      },
-      goDeviceInfo(){
-          wx.navigateTo({url: '/pages/setting/device/edit/main'})
-      },
-      exit(){
-          wx.showModal({
-              title: '',
-              content: '请确认是否退出登录？',
-              success : (res) =>  {
-                  if(res.confirm) {
-                      console.log('用户点击确定')
-                      this.logOut()
-                  } else if (res.cancel) {
-                      console.log('用户点击取消')
-                  }
-              }
-          })
-      },
-      async logOut(){
-          this.disabled =true
-          let result = await this.$http.userLogout()
-          wx.showToast({
-              title: result.msg,
-              icon: 'err',
-              duration: 2000
-          })
-          if(result.code == 0){
-              this.disabled = false
-              wx.clearStorage()
-              wx.redirectTo({url: '/pages/login/phone/main'})
-          }else{
-              setTimeout(function(){
-                  this.disabled = false
-              },1000)
-          }
-      }
+    onDeviceList(){
+      wx.navigateTo({url: '/pages/setting/device/manage/main'})
+    },
+    onChangeEdition(){
+        wx.navigateTo({url: '/pages/setting/edition/main'})
+    },
+    goDeviceInfo(){
+        wx.navigateTo({url: '/pages/setting/device/edit/main'})
+    },
+    exit(){
+        wx.showModal({
+            title: '',
+            content: '请确认是否退出登录？',
+            success : (res) =>  {
+                if(res.confirm) {
+                    console.log('用户点击确定')
+                    this.logOut()
+                } else if (res.cancel) {
+                    console.log('用户点击取消')
+                }
+            }
+        })
+    },
+    async logOut(){
+        this.disabled =true
+        let result = await this.$http.userLogout()
+        wx.showToast({
+            title: result.msg,
+            icon: 'err',
+            duration: 2000
+        })
+        if(result.code == 0){
+            this.disabled = false
+            wx.clearStorage()
+            wx.reLaunch({url: '/pages/login/phone/main'})
+        }else{
+            setTimeout(function(){
+                this.disabled = false
+            },1000)
+        }
     }
   }
+}
 </script>
 
 <style lang="less" scoped>
