@@ -12,7 +12,7 @@
       <img class="arr_right"  src="/static/resources/arr_right.png"/>
     </div>
     <div class="setting_item" @click="onPay">
-      <span><img class="shebei"  src="/static/resources/setting/shebei.png"/></span>
+      <span><img class="pay"  src="/static/resources/setting/payPrice.png"/></span>
       <div class="device_text">设备续费</div>
       <img class="arr_right"  src="/static/resources/arr_right.png"/>
     </div>
@@ -182,8 +182,12 @@ export default {
     }
      .shebei{
        margin-top: 20rpx;
-        height: 50rpx;
-        width: 30rpx;
+       height: 50rpx;
+       width: 30rpx;
+      }
+      .shebei{
+        height: 35rpx;
+        width: 48rpx;
       }
     .arr_right{
       height: 35rpx;
