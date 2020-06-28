@@ -51,11 +51,11 @@ export default {
     MAP_TYPE () { return MAP_TYPE },
     markers () {
       return [{
-        iconPath: '/static/resources/home/point_at.gif',
+        iconPath: '/static/resources/home/point.png',
         longitude: this.recordLast.lng,
         latitude: this.recordLast.lat,
-        width: 50,
-        height: 50
+        width: 100,
+        height: 100
       }]
     }
   },
