@@ -2,7 +2,7 @@
   <block>
     <div class="TopSearch" v-if="!showSelect">
       <navigator url="/pages/setting/index/main">
-        <img class="img_avatar" :src="device.avatar || '/static/resources/login/user.png'" />
+        <img :class="device.online?'img_avatar online':'img_avatar offline'" :src="device.avatar || '/static/resources/login/user.png'" />
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
@@ -97,6 +97,34 @@ export default {
   border-radius: 8rpx;
   box-shadow: 0 0 6rpx #ccc;
   padding: 0 20rpx;
+  .offline{
+    position: relative;
+    &::before{
+      display: inline-block;
+      position: absolute;
+      top: 10%;
+      right: 10%;
+      content: '';
+      height: 16rpx;
+      width: 16rpx;
+      border-radius: 50%;
+      background: #878B8E;
+    }
+  }
+  .online{
+    position: relative;
+    &::before{
+      display: inline-block;
+      position: absolute;
+      top: 10%;
+      right: 10%;
+      content: '';
+      height: 16rpx;
+      width: 16rpx;
+      border-radius: 50%;
+      background: rgb(62, 236, 62);
+    }
+  }
   .search {
     margin-left: 30rpx;
     display: flex;
