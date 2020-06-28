@@ -11,6 +11,11 @@
       <div class="device_text">设备管理</div>
       <img class="arr_right"  src="/static/resources/arr_right.png"/>
     </div>
+    <div class="setting_item" @click="onPay">
+      <span><img class="shebei"  src="/static/resources/setting/shebei.png"/></span>
+      <div class="device_text">设备续费</div>
+      <img class="arr_right"  src="/static/resources/arr_right.png"/>
+    </div>
     <div class="setting_item" @click="onChangeEdition">
       <span><img class="banben_img"  src="/static/resources/setting/banben.png"/></span>
       <div class="device_text">官网</div>
@@ -49,6 +54,9 @@ export default {
     },
     onDeviceList(){
       wx.navigateTo({url: '/pages/setting/device/manage/main'})
+    },
+    onPay(){
+      wx.navigateTo({url: `/pages/setting/device/renew/main?imei=${this.imei}`})
     },
     onChangeEdition(){
         wx.navigateTo({url: '/pages/setting/edition/main'})
