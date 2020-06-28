@@ -51,7 +51,7 @@ export default {
     MAP_TYPE () { return MAP_TYPE },
     markers () {
       return [{
-        iconPath: '/static/resources/home/point.png',
+        iconPath: '/static/resources/home/point.gif',
         longitude: this.recordLast.lng,
         latitude: this.recordLast.lat,
         width: 100,
