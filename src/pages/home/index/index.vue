@@ -146,7 +146,7 @@ export default {
 // }
 .HomeIndex {
   background: rgb(103, 187, 103);
-  height: 100vh;
+  // height: 100vh;
   display: flex;
   justify-content: center;
 }
