@@ -107,10 +107,10 @@ export default {
   z-index: 1;
   height: 40rpx;
   line-height: 40rpx;
-  width: 160rpx;
+  width: 240rpx;
   border-radius: 20rpx 0 0 20rpx;
   color: #666;
-  font-size: 24rpx;
+  font-size: 36rpx;
   background: rgba(256, 256, 256, .8);
   box-shadow: 0 0 6rpx #ccc;
   text-align: center;
