@@ -6,7 +6,7 @@
         @click="changeTabs(x,key)"
         v-for="(x,key) in tabsList"
         :key=key
-        :class="keyIndex == key ? 'device_checked':''"
+        :class="keyIndex == x.value ? 'device_checked':''"
       >{{ x.name }}({{ x.count }})</span>
     </div>
     <div class="search_box">
@@ -88,9 +88,9 @@ import Electricity from '@/pages/public/Electricity.vue'
       tabsList () {
         const { allTotal, onlineTotal } = this.listInfo
         return [
-          { name:'全部', count: allTotal },
-          { name:'在线', count: onlineTotal },
-          { name:'离线', count: allTotal - onlineTotal }
+          { name:'全部',value:'0', count: allTotal },
+          { name:'在线',value:'1', count: onlineTotal },
+          { name:'离线', value:'2',count: allTotal - onlineTotal }
         ]
       }
     },
@@ -240,6 +240,26 @@ import Electricity from '@/pages/public/Electricity.vue'
       display: inline-block;
       width: 33.3%;
       border-bottom: 1rpx solid #fff;
+      &:nth-child(3){
+        &::before{
+          display: inline-block;
+          content: '';
+          height: 16rpx;
+          width: 16rpx;
+          border-radius: 50%;
+          background: #878B8E;
+        }
+      }
+      &:nth-child(2){
+        &::before{
+          display: inline-block;
+          content: '';
+          height: 16rpx;
+          width: 16rpx;
+          border-radius: 50%;
+          background: rgb(62, 236, 62);
+        } 
+      }
     }
     .device_checked{
       color: #4388FF;
