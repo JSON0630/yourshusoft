@@ -54,8 +54,8 @@ export default {
         iconPath: '/static/resources/home/point_at.gif',
         longitude: this.recordLast.lng,
         latitude: this.recordLast.lat,
-        width: 30,
-        height: 30
+        width: 50,
+        height: 50
       }]
     }
   },
@@ -72,7 +72,7 @@ export default {
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data.length) {
         this.handeDeviceChange(data[0])
-        this.deviceList = Object.freeze(data.slice(0, 10))
+        this.deviceList = Object.freeze(data)
       } else {
         wx.showToast({ title: '无设备', icon: 'none' })
         this.handeDeviceChange({})
