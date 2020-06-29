@@ -97,8 +97,9 @@ export default {
       if (data) {
         this.recordLast = data
         let rescod = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng) 
-        this.recordLast.lat = rescod.latitude
-        this.recordLast.lng = rescod.longitude
+        this.recordLast.lat = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng).latitude
+        this.recordLast.lng = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng).longitude
+        console.log(this.recordLast)
         map.moveToLocation({longitude: rescod.longitude, latitude: rescod.latitude})
         this.update({imei: data.imei})
       } else {
