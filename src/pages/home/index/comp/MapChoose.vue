@@ -51,12 +51,12 @@ export default {
   top: 18vh;
   right: 17rpx;
   border-radius: 14rpx;
-  width: 80rpx;
-  height: 100rpx;
+  width: 72rpx;
+  height: 90rpx;
   background: #fff;
   z-index: 2;
   color: #999;
-  font-size: 24rpx;
+  font-size: 20rpx;
   text-align: center;
   padding: 12rpx 16rpx 8rpx;
   transition: top .3s ease;

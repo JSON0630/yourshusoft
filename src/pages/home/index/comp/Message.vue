@@ -50,8 +50,8 @@ export default {
   &.close {
     left: 17rpx;
     border-radius: 14rpx;
-    width: 80rpx;
-    height: 100rpx;
+    height: 90rpx;
+    width: 72rpx;
   }
   .long {
     display: flex;
@@ -63,8 +63,9 @@ export default {
     }
   }
   .short {
+    font-size: 20rpx;
     text-align: center;
-    padding: 12rpx 16rpx 8rpx;
+    width: 100%;
   }
   .img {
     &_message { width: 29rpx; height: 28rpx; }

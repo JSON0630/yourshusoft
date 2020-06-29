@@ -70,7 +70,7 @@ export default {
   flex-direction: column;
   box-shadow: 0 0 6rpx #ccc;
   background: rgba(255, 255, 255, .8);
-  color: #999;
+  color: #666;
   padding: 20rpx 36rpx;
   border-radius: 20rpx;
   &::after {
@@ -89,8 +89,8 @@ export default {
     position: absolute;
     right: 0;
     top: -100rpx;
-    width: 85rpx;
-    height: 84rpx;
+    width: 72rpx;
+    height: 72rpx;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,6 +111,7 @@ export default {
     font-size: 24rpx;
     width: 100%;
     height: 0;
+    color: #999;
     overflow: hidden;
     transition: height .3s ease;
     &.show {
@@ -135,7 +136,7 @@ export default {
   .img {
     &_daohang { width: 110rpx; height: 47rpx; margin-left: 30rpx; }
     &_zhankai { width: 18rpx; height: 18rpx; margin-right: 17rpx; }
-    &_location { width: 46rpx; height: 45rpx; }
+    &_location { width: 42rpx; height: 41rpx; }
   }
 }
 </style>
