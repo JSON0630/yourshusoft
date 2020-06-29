@@ -74,7 +74,8 @@ export default {
       }
     },
     currentPoint () {
-      return this.points[this.currentPointIndex] || {}
+      const i = this.currentPointIndex > 0 ? this.currentPointIndex - 1 : 0
+      return this.points[i] || {}
     },
     polyline () {
       return [{
@@ -149,7 +150,9 @@ export default {
     },
     handlePlay () {
       this.isPlay = true
-      this.currentPointIndex = 0
+      if (this.currentPointIndex === this.points.length - 1) {
+        this.currentPointIndex = 0
+      }
       timer = setInterval(() => {
         if (this.currentPointIndex < this.points.length - 1) {
           this.currentPointIndex++
