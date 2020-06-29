@@ -50,7 +50,8 @@ export default {
       this.device = {
         imei: device.imei,
         avatar: device.avatar || device.babyAvatar,
-        name: device.name || device.babyName
+        name: device.name || device.babyName,
+        ...device
       }
     }
   },
