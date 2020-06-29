@@ -185,7 +185,7 @@ export default {
        height: 50rpx;
        width: 30rpx;
       }
-      .shebei{
+      .pay{
         height: 35rpx;
         width: 48rpx;
       }
