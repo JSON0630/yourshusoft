@@ -5,6 +5,7 @@
       :polyline="polyline"
       :include-points="points"
       :markers="markers"
+       scale="17"
       style="width: 100%; height: 100vh;"
     />
     <SearchOptions :date="date" @submit="trackRecordList"/>
@@ -34,6 +35,7 @@
 import { mapState } from 'vuex'
 import SearchOptions from './comp/SearchOptions'
 import { formatTime } from '@/utils'
+import { WSCoordinate } from '@/utils/WSCoordinate'
 
 let map = null
 let timer = null
@@ -122,7 +124,10 @@ export default {
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (!data.length) { return wx.showToast({ title: '无记录', icon: 'none' }) }
       this.currentPointIndex = data.length - 1
-      this.points = Object.freeze(data.map(pos => ({latitude: pos.lat, longitude: pos.lng, ...pos})))
+      this.points = Object.freeze(data.map(pos => ({
+        latitude: WSCoordinate.transformFromWGSToGCJ(pos.lat, pos.lng).latitude, 
+        longitude: WSCoordinate.transformFromWGSToGCJ(pos.lat, pos.lng).longitude, 
+        ...pos})))
     },
     goTrackList () {
       wx.navigateTo({
