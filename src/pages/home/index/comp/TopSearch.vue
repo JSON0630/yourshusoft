@@ -57,13 +57,26 @@ export default {
   },
   methods: {
     scanCode () {
-      wx.scanCode({
-        async success (res) {
-          const { success, data, msg } = await this.$http.deviceBind({imei: res.result})
-          if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-          wx.showToast({ title: '绑定成功', icon: 'success' })
-        }
-      })
+       const that =this
+        wx.showActionSheet({
+          itemList: [ '手动添加','扫码添加'],
+          success (res) {
+            if(res.tapIndex == 0){
+              wx.navigateTo({url: '/pages/home/adddevice/main'})
+            }else if(res.tapIndex == 1){
+               wx.scanCode({
+                async success (res) {
+                  console.log(res)
+                  wx.navigateTo({url: `/pages/home/adddevice/main?imei=${res.result.split('?')[1].split('=')[1]}`})
+                }
+            })
+            }
+          },
+          fail (res) {
+            console.log(res.errMsg)
+          }
+        })
+     
     },
     onDeviceChange (device) {
       this.$emit('deviceChange', device)
