@@ -36,7 +36,7 @@ export default {
       const { success, msg, data } = await this.$http.trackRecordList(params)
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data.length) {
-        this.list = data.slice(0, 10)
+        this.list = Object.freeze(data)
       } else {
         this.isNoData = true
       }

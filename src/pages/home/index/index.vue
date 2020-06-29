@@ -54,8 +54,8 @@ export default {
         iconPath: '/static/resources/home/point.gif',
         longitude: this.recordLast.lng,
         latitude: this.recordLast.lat,
-        width: 100,
-        height: 100
+        width: 30,
+        height: 30
       }]
     }
   },

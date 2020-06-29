@@ -9,16 +9,17 @@
     />
     <SearchOptions :date="date" @submit="trackRecordList"/>
     <div class="bottom">
-      <!-- <div class="media_btn">
-        <img class="img_m_left" src="/static/resources/home/m_left.png" alt="">
-        <img class="img_m_pause" src="/static/resources/home/m_pause.png" alt="">
-        <img class="img_m_right" src="/static/resources/home/m_right.png" alt="">
-        <button class="btn">快</button>
-      </div> -->
+      <div class="media_btn">
+        <img @click="handlePrev" class="img_m_left" src="/static/resources/home/m_left.png" alt="">
+        <img v-if="isPlay" @click="handlePause" class="img_m_pause" src="/static/resources/home/m_pause.png" alt="">
+        <div v-else @click="handlePlay" class="triangle"/>
+        <img @click="handleNext" class="img_m_right" src="/static/resources/home/m_right.png" alt="">
+        <button class="btn" @click="changeSpeed">{{ label }}</button>
+      </div>
       <div class="info">
         <div class="address">
-          <div class="text">{{ recordLast.address }}</div>
-          <div class="time">{{ recordLast.date }}   定位模式:{{ recordLast.type }}</div>
+          <div class="text">{{ currentPoint.address }}</div>
+          <div class="time">{{ currentPoint.date }}   定位模式:{{ currentPoint.type }}</div>
         </div>
         <div class="all_btn" @click="goTrackList">
           <img class="img_all_track" src="/static/resources/home/all_track.png" alt="">
@@ -34,42 +35,72 @@ import { mapState } from 'vuex'
 import SearchOptions from './comp/SearchOptions'
 import { formatTime } from '@/utils'
 
+let map = null
+let timer = null
 export default {
   components: { SearchOptions },
   data: () => ({
     date: '',
     deviceImei: '',
-    recordLast: {},
-    trackList: [],
     points: [],
+    currentPointIndex: 0,
     startTime: '',
-    endTime: ''
+    endTime: '',
+    speedIndex: 2,
+    isPlay: false
   }),
   computed: {
     ...mapState(['imei']),
+    speeds () {
+      return [
+        { label: '快', div: 100 },
+        { label: '中', div: 50 },
+        { label: '慢', div: 20 }
+      ]
+    },
+    label () {
+      return this.speeds[this.speedIndex].label
+    },
+    div () {
+      return this.speeds[this.speedIndex].div
+    },
+    speed () {
+      if (this.points.length) {
+        const point = this.points[this.currentPointIndex] || {}
+        const nextPoint = this.points[this.currentPointIndex + 1] || {}
+        return (new Date(nextPoint.date).getTime() - new Date(point.date).getTime()) / this.div
+      } else {
+        return 1000
+      }
+    },
+    currentPoint () {
+      return this.points[this.currentPointIndex] || {}
+    },
     polyline () {
       return [{
-        points: this.points,
-        color: '#4c8eff',
+        points: this.points.slice(0, this.currentPointIndex),
+        color: '#1ca43c',
         width: 4,
         arrowLine: true
+      }, {
+        points: this.points,
+        color: '#4e71f25c',
+        width: 4,
       }]
     },
     markers () {
-      return this.points.slice(-1).map(pos => ({
+      return [{
         iconPath: '/static/resources/home/point_now.gif',
-        ...pos,
+        ...this.currentPoint,
         id: 0,
         width: 40,
         height: 48
-      }))
+      }]
     }
   },
   onLoad (options) {
-    console.log(options.imei)
+    map = wx.createMapContext('map')
     this.deviceImei = options.imei || this.imei
-    this.trackRecordLast()
-    // this.trackRecordCheck()
     this.trackRecordList({
       dataTypeList: [1, 2, 3],
       rectify: false,
@@ -77,21 +108,6 @@ export default {
     })
   },
   methods: {
-    async trackRecordLast () {
-      const { success, data, msg } = await this.$http.trackRecordLast({imei: this.deviceImei})
-      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-      this.recordLast = data
-    },
-    // async trackRecordCheck () {
-    //   const { success, data, msg } = await this.$http.trackRecordCheck({imei: this.deviceImei})
-    //   if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-    //   if (!data.length) { return wx.showToast({ title: '无轨迹记录', icon: 'none' }) }
-    //   this.trackRecordList({
-    //     dataTypeList: [1, 2, 3],
-    //     rectify: false,
-    //     date: data[data.length - 1]
-    //   })
-    // },
     async trackRecordList (params) {
       this.date = params.date
       this.startTime = formatTime(params.date, 'yyyy年MM月dd日 ') + '00:00:00'
@@ -104,13 +120,50 @@ export default {
       })
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (!data.length) { return wx.showToast({ title: '无记录', icon: 'none' }) }
-      this.trackList = Object.freeze(data)
-      this.points = data.map(pos => ({latitude: pos.lat, longitude: pos.lng}))
+      this.currentPointIndex = data.length - 1
+      this.points = Object.freeze(data.map(pos => ({latitude: pos.lat, longitude: pos.lng, ...pos})))
     },
     goTrackList () {
       wx.navigateTo({
         url: `/pages/home/trackList/main?imei=${this.deviceImei}&startTime=${this.startTime}&endTime=${this.endTime}`
       })
+    },
+    changeSpeed () {
+      const that = this
+      wx.showActionSheet({
+        itemList: that.speeds.map(v => v.label),
+        success (res) {
+          that.speedIndex = res.tapIndex
+        }
+      })
+    },
+    handlePrev () {
+      this.handlePause()
+      if (this.currentPointIndex > 0) {
+        this.currentPointIndex--
+      }
+    },
+    handlePause () {
+      this.isPlay = false
+      clearInterval(timer)
+    },
+    handlePlay () {
+      this.isPlay = true
+      this.currentPointIndex = 0
+      timer = setInterval(() => {
+        if (this.currentPointIndex < this.points.length - 1) {
+          this.currentPointIndex++
+          map.moveToLocation(this.currentPoint)
+        } else {
+          this.handlePause()
+        }
+      }, this.speed)
+    },
+    handleNext () {
+      this.handlePause()
+      if (this.currentPointIndex < this.points.length - 1) {
+        this.currentPointIndex++
+      }
     }
   }
 }
@@ -175,9 +228,17 @@ export default {
       }
     }
   }
+  .triangle {
+    border-width: 13rpx 20rpx;
+    border-color: transparent transparent transparent #9B9B9B;
+    border-style: solid;
+    height: 0;
+    width: 0;
+    margin-left: 15vw;
+  }
   .img {
     &_m_left { width: 25rpx; height: 25rpx; }
-    &_m_pause { width: 25rpx; height: 29rpx; }
+    &_m_pause { width: 25rpx; height: 29rpx; margin-right: 8rpx; }
     &_m_right { width: 25rpx; height: 25rpx; }
     &_all_track { width: 46rpx; height: 39rpx; }
   }
