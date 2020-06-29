@@ -5,6 +5,7 @@
       class="home_map"
       :enable-satellite="mapType===MAP_TYPE.satellite"
       :markers="markers"
+      scale="17"
       style="width: 100%; height: 100vh;"
     />
     <div class="HomeIndex">
@@ -30,7 +31,7 @@ import MapChoose from './comp/MapChoose'
 import PopAddress from './comp/PopAddress'
 import PosBottom from './comp/PosBottom'
 import { MAP_TYPE } from '@/global/constants'
-
+import { WSCoordinate } from '@/utils/WSCoordinate'
 let map = null
 export default {
   components: {
@@ -95,7 +96,10 @@ export default {
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data) {
         this.recordLast = data
-        map.moveToLocation({longitude: data.lng, latitude: data.lat})
+        let rescod = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng) 
+        this.recordLast.lat = rescod.latitude
+        this.recordLast.lng = rescod.longitude
+        map.moveToLocation({longitude: rescod.longitude, latitude: rescod.latitude})
         this.update({imei: data.imei})
       } else {
         this.getLocation(({latitude, longitude}) => {
@@ -134,7 +138,7 @@ export default {
       this.mapType = type
     },
     getLocation (success) {
-      wx.getLocation({ type: 'wgs84', success })
+      wx.getLocation({ type: 'gcj02', success })
     }
   }
 };
