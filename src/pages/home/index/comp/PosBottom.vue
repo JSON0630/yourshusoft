@@ -5,7 +5,7 @@
       <div>设置</div>
     </navigator>
     <div class="pos_wrap">
-      <img class="img_pos" src="/static/resources/home/pos.png" alt="">
+      <img class="img_pos" src="/static/resources/home/pos.png" alt="" @click="$emit('daohang')">
     </div>
     <navigator url="/pages/home/track/main" class="bottom_item" hover-class="none">
       <img class="img_track" src="/static/resources/home/track.png" alt="">
