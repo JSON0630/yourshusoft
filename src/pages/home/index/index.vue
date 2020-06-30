@@ -18,7 +18,7 @@
       <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
       <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
       <PopAddress v-if="recordLast.imei" :recordLast="recordLast" @onPos="handlePos" @daohang="handleDaohang"/>
-      <PosBottom v-if="recordLast.imei" />
+      <PosBottom v-if="recordLast.imei"  @daohang="handleDaohang" />
     </div>
   </block>
 </template>
