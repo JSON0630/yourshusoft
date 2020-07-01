@@ -1,7 +1,8 @@
 <template>
   <div class="PopAddress">
-    <div class="location" @click="$emit('onPos')">
-      <img class="img_location" src="/static/resources/home/location.png" alt="">
+    <div class="location" @click="handlePos">
+      <div v-if="time>0">{{ time }}s</div>
+      <img v-else class="img_location" src="/static/resources/home/location.png" alt="">
     </div>
     <div class="address">
       <div class="flex-1" @click="showMore=!showMore">{{ recordLast.address }}</div>
@@ -54,8 +55,32 @@ export default {
     recordLast: Object
   },
   data: () => ({
-    showMore: false
-  })
+    showMore: false,
+    /** 倒计时 */
+    time: 0
+  }),
+  methods: {
+    /** 手动定位 */
+    async handlePos () {
+      this.$emit('refresh')
+      if (this.time > 0) return
+      const { imei } = this.recordLast
+      const { success, msg } = await this.$http.deviceRefreshGps({imei})
+      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      wx.showToast({ title: '手动定位已下发，位置即将更新', icon: 'none' })
+      this.initTimer()
+    },
+    initTimer () {
+      this.time = 30
+      const timer = setInterval(() => {
+        if (this.time > 0) {
+          this.time--
+        } else {
+          clearInterval(timer)
+        }
+      }, 1000)
+    }
+  }
 }
 </script>
 
@@ -97,6 +122,7 @@ export default {
     box-shadow: 0 0 6rpx #ccc;
     border-radius: 50%;
     background: #fff;
+    font-size: 24rpx;
   }
   .address {
     display: flex;

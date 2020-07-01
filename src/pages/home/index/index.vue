@@ -2,7 +2,6 @@
   <block>
     <map
       id="map"
-      class="home_map"
       :enable-satellite="mapType===MAP_TYPE.satellite"
       :markers="markers"
       scale="17"
@@ -17,8 +16,8 @@
       />
       <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
       <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
-      <PopAddress v-if="recordLast.imei" :recordLast="recordLast" @onPos="handlePos" @daohang="handleDaohang"/>
-      <PosBottom v-if="recordLast.imei"  @daohang="handleDaohang" />
+      <PopAddress v-if="recordLast.imei" :recordLast="recordLast" @refresh="handleRefresh" @daohang="handleDaohang"/>
+      <PosBottom v-if="recordLast.imei" @daohang="handleDaohang" />
     </div>
   </block>
 </template>
@@ -69,6 +68,7 @@ export default {
     ...mapMutations(['update']),
     /** 查询设备，默认选中第一个 */
     async deviceListSimple () {
+      wx.showLoading({ title: '拉取设备中' })
       const { success, data, msg } = await this.$http.deviceListSimple()
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data.length) {
@@ -79,6 +79,7 @@ export default {
         this.handeDeviceChange({})
         this.deviceList = []
       }
+      wx.hideLoading()
     },
     /** 搜索 - 选择设备 */
     handeDeviceChange (device) {
@@ -93,14 +94,13 @@ export default {
     /** 设备信息 */
     async trackRecordLast (imei) {
       const { success, data, msg } = await this.$http.trackRecordLast({imei})
+      console.log(data.address)
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
+      this.recordLast.imei = ''
       if (data) {
-        this.recordLast = data
-        let rescod = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng) 
-        this.recordLast.lat = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng).latitude
-        this.recordLast.lng = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng).longitude
-        console.log(this.recordLast)
-        map.moveToLocation({longitude: rescod.longitude, latitude: rescod.latitude})
+        const { longitude, latitude } = WSCoordinate.transformFromWGSToGCJ(data.lat,data.lng)
+        this.recordLast = { ...data, lat: latitude, lng: longitude }
+        map.moveToLocation({longitude, latitude})
         this.update({imei: data.imei})
       } else {
         this.getLocation(({latitude, longitude}) => {
@@ -116,11 +116,9 @@ export default {
       this.deviceList = Object.freeze(data)
     },
     /** 手动定位 */
-    async handlePos () {
-      const { imei } = this.recordLast
-      const { success, msg } = await this.$http.deviceRefreshGps({imei})
-      if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
-      this.trackRecordLast(imei)
+    async handleRefresh () {
+      const { lat, lng } = this.recordLast
+      map.moveToLocation({ longitude: lng, latitude: lat })
     },
     /** 导航 */
     handleDaohang () {
@@ -146,12 +144,8 @@ export default {
 </script>
 
 <style lang="less">
-// .home_map {
-//   position: fixed;
-// }
 .HomeIndex {
   background: rgb(103, 187, 103);
-  // height: 100vh;
   display: flex;
   justify-content: center;
 }

@@ -110,7 +110,7 @@ export default {
   width: 240rpx;
   border-radius: 20rpx 0 0 20rpx;
   color: #666;
-  font-size: 36rpx;
+  font-size: 32rpx;
   background: rgba(256, 256, 256, .8);
   box-shadow: 0 0 6rpx #ccc;
   text-align: center;
