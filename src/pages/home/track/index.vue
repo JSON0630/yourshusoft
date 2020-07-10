@@ -10,13 +10,13 @@
     />
     <SearchOptions :date="date" @submit="trackRecordList"/>
     <div class="bottom">
-      <div class="media_btn">
+      <!-- <div class="media_btn">
         <img @click="handlePrev" class="img_m_left" src="/static/resources/home/m_left.png" alt="">
         <img v-if="isPlay" @click="handlePause" class="img_m_pause" src="/static/resources/home/m_pause.png" alt="">
         <div v-else @click="handlePlay" class="triangle"/>
         <img @click="handleNext" class="img_m_right" src="/static/resources/home/m_right.png" alt="">
         <button class="btn" @click="changeSpeed">{{ label }}</button>
-      </div>
+      </div> -->
       <div class="info">
         <div class="address">
           <div class="text">{{ currentPoint.address }}</div>
