@@ -29,11 +29,16 @@ export default {
     list: []
   }),
   onLoad (options) {
-    this.trackRecordList(options)
+    console.log(options, JSON.parse(options.params))
+    this.trackRecordList(JSON.parse(options.params))
   },
   methods: {
     async trackRecordList (params) {
-      const { success, msg, data } = await this.$http.trackRecordList(params)
+      const { success, msg, data } = await this.$http.trackRecordList({
+        ...params,
+        startTime: params.date + ' ' + params.startTime,
+        endTime: params.date + ' ' + params.endTime
+      })
       if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
       if (data.length) {
         this.list = Object.freeze(data)

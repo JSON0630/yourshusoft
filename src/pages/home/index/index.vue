@@ -17,7 +17,7 @@
       <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
       <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
       <PopAddress v-if="recordLast.imei" :recordLast="recordLast" @refresh="handleRefresh" @daohang="handleDaohang"/>
-      <PosBottom v-if="recordLast.imei" @daohang="handleDaohang" />
+      <PosBottom v-if="recordLast.imei" :imei="recordLast.imei" />
     </div>
   </block>
 </template>
@@ -29,8 +29,9 @@ import Message from './comp/Message'
 import MapChoose from './comp/MapChoose'
 import PopAddress from './comp/PopAddress'
 import PosBottom from './comp/PosBottom'
-import { MAP_TYPE } from '@/global/constants'
+import { MAP_TYPE, H5 } from '@/global/constants'
 import { WSCoordinate } from '@/utils/WSCoordinate'
+
 let map = null
 export default {
   components: {

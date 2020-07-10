@@ -38,7 +38,7 @@
               </div>
             </div>
             <div class="device_item_bottom">
-              <p @click="goPosition(x)" >
+              <p @click="goDingwei(x)" >
                 <img class="device_dingwei" src="/static/resources/setting/dingwei.png"/>
                 定位
               </p>
@@ -150,11 +150,16 @@ import Electricity from '@/pages/public/Electricity.vue'
           }
         );
       },
-      goPosition(item){
-        wx.navigateTo({url: `/pages/home/track/main?imei=${item.imei}`})
+      goTrack(item) {
+        wx.navigateTo({
+          url: H5.getTrackPath(item.imei)
+        })
       },
-      goTrack(item){
-        wx.navigateTo({url: `/pages/home/track/main?imei=${item.imei}`})
+      /** 定位 */
+      goDingwei (item) {
+        wx.navigateTo({
+          url: H5.getPosPath(item.imei)
+        })
       },
       goSetting(item){
         wx.navigateTo({url: `/pages/setting/device/setting/main?imei=${item.imei}`})

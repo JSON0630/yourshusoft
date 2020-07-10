@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/home/index/main",
+    "pages/webview/main",
     "pages/home/adddevice/main",
     "pages/home/message/main",
     "pages/home/track/main",

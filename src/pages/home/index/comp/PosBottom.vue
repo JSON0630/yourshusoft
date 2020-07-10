@@ -4,19 +4,36 @@
       <img class="img_setting" src="/static/resources/home/setting.png" alt="">
       <div>设置</div>
     </navigator>
-    <div class="pos_wrap">
-      <img class="img_pos" src="/static/resources/home/pos.png" alt="" @click="$emit('daohang')">
+    <div @click="goDingwei" class="pos_wrap">
+      <img class="img_pos" src="/static/resources/home/pos.png" alt="">
     </div>
-    <navigator url="/pages/home/track/main" class="bottom_item" hover-class="none">
+    <div @click="goTrack" class="bottom_item">
       <img class="img_track" src="/static/resources/home/track.png" alt="">
       <div>轨迹</div>
-    </navigator>
+    </div>
   </div>
 </template>
 
 <script>
+import { H5 } from '@/global/constants'
+
 export default {
-  
+  props: {
+    imei: String
+  },
+  methods: {
+    goTrack() {
+      wx.navigateTo({
+        url: H5.getTrackPath(this.imei)
+      })
+    },
+    /** 定位 */
+    goDingwei () {
+      wx.navigateTo({
+        url: H5.getPosPath(this.imei)
+      })
+    }
+  }
 }
 </script>
 
