@@ -32,6 +32,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import SearchOptions from './comp/SearchOptions.vue'
 import { dateFormat } from '@/utils'
+import WSCoordinate from '@/plugins/WSCoordinate.ts'
+
 var emptyLineStyle = {
       lineWidth: 0,
       fillStyle: null,
@@ -131,10 +133,14 @@ export default class extends Vue {
         endTime: params.date + ' ' + params.endTime
       })
     }).then(response => response.json()).then(json => {
-      this.list = Object.freeze(json.data)
+      const data = json.data.map(v => {
+        const pos = WSCoordinate.transformFromWGSToGCJ(v.lat, v.lng)
+        return { ...v, lng: pos.longitude, lat: pos.latitude }
+      })
+      this.list = Object.freeze(data)
       if (this.list.length) {
         this.currentIndex = this.list.length - 1
-        this.path = Object.freeze(json.data.map(v => [v.lng, v.lat]))
+        this.path = Object.freeze(data.map(v => [v.lng, v.lat]))
         pathSimplifierIns.setData([{path: this.path}])
         pathSimplifierIns.setSelectedPathIndex(0)
         this.addMarker()

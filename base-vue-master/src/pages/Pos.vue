@@ -51,6 +51,7 @@
 <script lang=ts>
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import Electricity from '../components/Electricity.vue'
+import WSCoordinate from '@/plugins/WSCoordinate.ts'
 
 interface IQuery {
   token: string
@@ -87,8 +88,9 @@ export default class extends Vue {
       const { data, msg } = json
       if (msg) { this.$toast(msg) }
       if (data) {
-        this.recordLast = data
-        this.initDevicePosition(data)
+        const pos = WSCoordinate.transformFromWGSToGCJ(data.lat, data.lng)
+        this.recordLast = Object.freeze({...data, lng: pos.longitude, lat: pos.latitude})
+        this.initDevicePosition(this.recordLast)
         this.drawPolyline()
       }
     })
