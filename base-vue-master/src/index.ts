@@ -13,9 +13,9 @@ Object.assign(Vue.prototype, {
   $toast: toast,
   $http: http
 })
-loadJs(window.VConsole, 'https://cdn.bootcdn.net/ajax/libs/vConsole/3.3.4/vconsole.min.js', () => {
-  new window.VConsole()
-})
+// loadJs(window.VConsole, 'https://cdn.bootcdn.net/ajax/libs/vConsole/3.3.4/vconsole.min.js', () => {
+//   new window.VConsole()
+// })
 loadJs(window.wx, 'https://res.wx.qq.com/open/js/jweixin-1.3.2.js')
 new Vue({
   router,

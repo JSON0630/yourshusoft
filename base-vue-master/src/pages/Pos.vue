@@ -67,7 +67,7 @@ export default class extends Vue {
   private recordLast = {}
   private myPosition = null
   private mounted() {
-    map = new AMap.Map('containerPos', { resizeEnable: true, zoom: 16 })
+    map = new AMap.Map('containerPos', { zoom: 16 })
     this.trackRecordLast()
     this.initMyPosition()
   }
@@ -96,6 +96,7 @@ export default class extends Vue {
     })
   }
   private initMyPosition() {
+    const that = this
     AMap.plugin('AMap.Geolocation', function() {
       geolocation = new AMap.Geolocation({
         enableHighAccuracy: true,//是否使用高精度定位，默认:true
@@ -103,11 +104,21 @@ export default class extends Vue {
         zoomToAccuracy: true  //定位成功后是否自动调整地图视野到定位点
       })
       map.addControl(geolocation);
+      geolocation.getCurrentPosition(function(status,result){
+        if(status=='complete'){
+          const { position } = result
+          console.log('-----', position)
+          that.myPosition = position
+          that.drawPolyline()
+        }else{
+          that.$toast('未获取到定位，请稍后重试')
+        }
+      })
     })
   }
   private initDevicePosition(data) {
     var deviceIcon = new AMap.Icon({
-        image: '/static/point_at.gif',
+        image: '/static/point.png',
         imageSize: new AMap.Size(60, 60)
     });
     var deviceMarker = new AMap.Marker({
@@ -116,7 +127,6 @@ export default class extends Vue {
         offset: new AMap.Pixel(-30, -30)
     });
     map.add([deviceMarker])
-    this.handlePosMy()
   }
   private handlePosMy() {
     const that = this
@@ -127,6 +137,7 @@ export default class extends Vue {
         that.myPosition = position
         that.drawPolyline()
         map.panTo(position)
+        map.setZoom(20)
       }else{
         that.$toast('未获取到定位，请稍后重试')
       }
@@ -135,6 +146,7 @@ export default class extends Vue {
   private handlePosDevice() {
     const { lng, lat } = this.recordLast as any
     map.panTo([lng, lat])
+    map.setZoom(20)
   }
   private drawPolyline() {
     const { lng, lat } = this.recordLast as any

@@ -42,6 +42,7 @@ var emptyLineStyle = {
   }
 let timer = null
 let map = null
+let markers = null
 var navg = null
 var pathSimplifierIns = null
 var AMap = window.AMap
@@ -138,12 +139,12 @@ export default class extends Vue {
         return { ...v, lng: pos.longitude, lat: pos.latitude }
       })
       this.list = Object.freeze(data)
+      this.addMarker()
       if (this.list.length) {
         this.currentIndex = this.list.length - 1
         this.path = Object.freeze(data.map(v => [v.lng, v.lat]))
         pathSimplifierIns.setData([{path: this.path}])
         pathSimplifierIns.setSelectedPathIndex(0)
-        this.addMarker()
       } else {
         this.$toast('无轨迹记录')
         this.currentIndex = 0
@@ -191,6 +192,7 @@ export default class extends Vue {
     }, 500);
   }
   private addMarker() {
+    markers && map.remove(markers);
     const { length } = this.list
     if (!length) return
     const startPos = this.list[0]
@@ -229,8 +231,10 @@ export default class extends Vue {
         offset: new AMap.Pixel(-13, -30)
     });
 
+    markers = [startMarker, endMarker]
+
     // 将 markers 添加到地图
-    map.add([startMarker, endMarker]);
+    map.add(markers);
   }
   private goTrackList () {
     const { imei } = this.$route.query
