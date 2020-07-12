@@ -2,8 +2,7 @@
   <block>
     <div class="TopSearch" v-if="!showSelect">
       <navigator url="/pages/setting/index/main">
-        <img v-if="device.avatar" class="img_avatar" :class="{online: device.online}" :src="device.avatar" />
-        <img v-else class="img_avatar" :class="{online: device.online}" src="/static/resources/login/user.png" />
+        <img class="img_avatar" :class="{online: device.online}" :src="device.avatar" @error="handleAvatarError"/>
       </navigator>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
@@ -25,7 +24,7 @@
         :class="{active: device.imei === x.imei}"
       >
         <div class="flex-align-center">
-          <img class="img_device" :src="x.avatar || x.babyAvatar" alt="">
+          <img class="img_device" :src="x.avatar || x.babyAvatar" @error="handleListImgError(x)">
           <div class="name">{{ x.name || x.babyName }}</div>
         </div>
         <div class="radius" :class="{online: x.online}"></div>
@@ -57,6 +56,12 @@ export default {
     }
   },
   methods: {
+    handleListImgError (x) {
+      x.avatar = '/static/resources/login/user.png'
+    },
+    handleAvatarError () {
+      this.device.avatar = '/static/resources/login/user.png'
+    },
     scanCode () {
        const that =this
         wx.showActionSheet({

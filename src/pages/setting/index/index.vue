@@ -3,8 +3,9 @@
     <div class="person_img" @click="goDeviceInfo">
       <!-- <img  class="person" src="/static/resources/setting/person.png"/> -->
       <img class="person" :src="deviceInfo.babyAvatar?deviceInfo.babyAvatar:'/static/resources/setting/person.png'" />
-      <div class="account" >{{ userName || '--'}}</div>
-      <div class="current_shebei">当前设备<span>{{deviceInfo.babyName? deviceInfo.babyName:'--'}}</span></div>
+      <div class="account" v-if="isLogin">{{ userName }}</div>
+      <div class="account" @click="handleLogin" v-else>点击登录账户</div>
+      <div class="current_shebei">当前设备<span>{{deviceInfo.babyName || '--'}}</span></div>
     </div>
     <div class="setting_item" @click="onDeviceList">
       <span><img class="shebei"  src="/static/resources/setting/shebei.png"/></span>
@@ -22,7 +23,7 @@
       <img class="arr_right"  src="/static/resources/arr_right.png"/>
       <!-- <span class="banben">0.0.0</span> -->
     </div>
-    <div class="btn_box exit_btn" @click="exit">
+    <div v-if="isLogin" class="btn_box exit_btn" @click="exit">
       <button type="" :disabled="disabled" :loading=disabled hover-class=“button-hover”>退出登录</button>
     </div>
   </div>
@@ -34,15 +35,21 @@ import { mapMutations, mapState } from 'vuex'
 export default {
   data: () => ({
     deviceInfo: {},
-    userName: '',
+    isLogin: false,
     disabled: false
   }),
   computed: {
-    ...mapState(['imei'])
+    ...mapState(['imei']),
+    userName() {
+      return wx.getStorageSync('USER_NAME') || '--'
+    }
   },
-  onLoad(){
-    this.userName = wx.getStorageSync('USER_NAME')
-    this.getDeviceInfo()
+  onLoad(options){
+    const { login } = options
+    this.isLogin = login !== '0'
+    if (this.isLogin) {
+      this.getDeviceInfo()
+    }
   },
   methods: {
     ...mapMutations(['update']),
@@ -53,9 +60,11 @@ export default {
       this.deviceInfo = data
     },
     onDeviceList(){
+      if (!this.isLogin) return wx.showToast({ title: '请先登录', icon: 'none' })
       wx.navigateTo({url: '/pages/setting/device/manage/main'})
     },
     onPay(){
+      if (!this.isLogin) return wx.showToast({ title: '请先登录', icon: 'none' })
       wx.navigateTo({url: `/pages/setting/device/renew/main?imei=${this.imei}`})
     },
     onChangeEdition(){
@@ -95,6 +104,9 @@ export default {
                 this.disabled = false
             },1000)
         }
+    },
+    handleLogin() {
+      wx.reLaunch({url: '/pages/login/phone/main'})
     }
   }
 }
