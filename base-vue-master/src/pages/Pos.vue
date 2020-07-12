@@ -10,7 +10,7 @@
       </div>
       <div class="address">
         <div class="flex-1" @click="showMore=!showMore">{{ recordLast.address }}</div>
-        <!-- <img class="img_daohang" src="@/assets/img/daohang.png" @click="$emit('daohang')"> -->
+        <img class="img_daohang" src="@/assets/img/daohang.png" @click="handleDaohang">
       </div>
       <div class="more_info" :class="{show: showMore}" @click="showMore=!showMore">
         <div class="flex">
@@ -69,7 +69,6 @@ export default class extends Vue {
   private mounted() {
     map = new AMap.Map('containerPos', { zoom: 16 })
     this.trackRecordLast()
-    this.initMyPosition()
   }
   /** 设备信息 */
   private trackRecordLast () {
@@ -90,8 +89,8 @@ export default class extends Vue {
       if (data) {
         const pos = WSCoordinate.transformFromWGSToGCJ(data.lat, data.lng)
         this.recordLast = Object.freeze({...data, lng: pos.longitude, lat: pos.latitude})
-        this.initDevicePosition(this.recordLast)
-        this.drawPolyline()
+        this.initDeviceMarker(this.recordLast)
+        this.initMyPosition()
       }
     })
   }
@@ -112,11 +111,12 @@ export default class extends Vue {
           that.drawPolyline()
         }else{
           that.$toast('未获取到定位，请稍后重试')
+          that.handlePosDevice()
         }
       })
     })
   }
-  private initDevicePosition(data) {
+  private initDeviceMarker(data) {
     var deviceIcon = new AMap.Icon({
         image: '/static/point.png',
         imageSize: new AMap.Size(60, 60)
@@ -168,6 +168,17 @@ export default class extends Vue {
     polyline.setMap(map)
     // 缩放地图到合适的视野级别
     map.setFitView([ polyline ])
+  }
+  private handleDaohang() {
+    const { address, lng, lat } = this.recordLast as any
+    window.wx.miniProgram.navigateTo({
+      url: `/pages/home/index/main?daohang=` + JSON.stringify({
+        name: this.$route.query.name,
+        latitude: lat,
+        longitude: lng,
+        address
+      })
+    })
   }
 }
 </script>

@@ -19,7 +19,8 @@ import { H5 } from '@/global/constants'
 
 export default {
   props: {
-    imei: String
+    imei: String,
+    name: String
   },
   methods: {
     goTrack() {
@@ -30,7 +31,7 @@ export default {
     /** 定位 */
     goDingwei () {
       wx.navigateTo({
-        url: H5.getPosPath(this.imei)
+        url: H5.getPosPath(this.imei, this.name)
       })
     }
   }

@@ -17,7 +17,7 @@
       <Message :unreadCount="unreadCount" @close="unreadCount=0"/>
       <MapChoose :isTop="unreadCount===0" :mapType="mapType" @change="handleMapTypeChange"/>
       <PopAddress v-if="recordLast.imei" :recordLast="recordLast" @refresh="handleRefresh" @daohang="handleDaohang"/>
-      <PosBottom v-if="recordLast.imei" :imei="recordLast.imei" />
+      <PosBottom v-if="recordLast.imei" :imei="recordLast.imei" :name="currentDevice.name || currentDevice.babyName"/>
     </div>
   </block>
 </template>
@@ -60,10 +60,15 @@ export default {
       }]
     }
   },
-  mounted () {
+  onLoad(options){
     map = wx.createMapContext('map')
-    this.deviceListSimple()
-    this.noticeUnreadCount()
+    const { daohang } = options
+    if (daohang) {
+      this.handleDaohang(JSON.parse(daohang))
+    } else {
+      this.deviceListSimple()
+      this.noticeUnreadCount()
+    }
   },
   methods: {
     ...mapMutations(['update']),
@@ -122,11 +127,12 @@ export default {
       map.moveToLocation({ longitude: lng, latitude: lat })
     },
     /** 导航 */
-    handleDaohang () {
+    handleDaohang (daohang) {
+      console.log(daohang)
       const { address, lng, lat } = this.recordLast
       const { name, babyName } = this.currentDevice
       this.getLocation(res => {
-        wx.openLocation({
+        wx.openLocation(daohang || {
           latitude: lat,
           longitude: lng,
           name: name || babyName,

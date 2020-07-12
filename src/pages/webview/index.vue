@@ -12,7 +12,7 @@ export default {
     ...mapState(['imei'])
   },
   onLoad: function (options) {
-    this.url = `${options.url}?token=${wx.getStorageSync('TOKEN')}&imei=${options.imei}`
+    this.url = `${options.url}?token=${wx.getStorageSync('TOKEN')}&imei=${options.imei}&name=${options.name || ''}`
   }
 }
 </script>

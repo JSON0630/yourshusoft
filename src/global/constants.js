@@ -5,9 +5,9 @@ export const MAP_TYPE = {
 }
 
 const webviewPath = '/pages/webview/main'
-// const h5Host = 'http://192.168.0.2:8081'
-const h5Host = 'https://gps.suogong.net/gpstrackanimation'
+const h5Host = 'http://192.168.0.2:8080'
+// const h5Host = 'https://gps.suogong.net/gpstrackanimation'
 export const H5 = {
   getTrackPath: imei => `${webviewPath}?url=${h5Host}/#/&imei=${imei}`,
-  getPosPath: imei => `${webviewPath}?url=${h5Host}/#/pos&imei=${imei}`
+  getPosPath: (imei, name) => `${webviewPath}?url=${h5Host}/#/pos&imei=${imei}&name=${name}`
 }

@@ -65,6 +65,7 @@
 
 <script>
 import Electricity from '@/pages/public/Electricity.vue'
+import { H5 } from '@/global/constants'
 
   export default {
     components: {
@@ -158,7 +159,7 @@ import Electricity from '@/pages/public/Electricity.vue'
       /** 定位 */
       goDingwei (item) {
         wx.navigateTo({
-          url: H5.getPosPath(item.imei)
+          url: H5.getPosPath(item.imei, item.babyName)
         })
       },
       goSetting(item){
