@@ -12,7 +12,7 @@
       <button class="button" :class="{time: time > 0}" @click="sendCode">{{ time > 0 ? time + 's' : '获取验证码'}}</button>
     </div>
     <div class="link">
-      <!-- <navigator class="link_item" url="/pages/login/account/main">账号密码登录</navigator> -->
+      <navigator class="link_item" url="/pages/login/account/main">账号密码登录</navigator>
     </div>
     <ThirdLogin @login="login"/>
   </div>
