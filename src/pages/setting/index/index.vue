@@ -1,10 +1,15 @@
 <template>
   <div class="person_center">
-    <div class="person_img" @click="goDeviceInfo">
+    <div class="person_img" v-if="isLogin" @click="goDeviceInfo">
       <!-- <img  class="person" src="/static/resources/setting/person.png"/> -->
       <img class="person" :src="deviceInfo.babyAvatar?deviceInfo.babyAvatar:'/static/resources/setting/person.png'" />
       <div class="account" v-if="isLogin">{{ userName }}</div>
-      <div class="account" @click="handleLogin" v-else>点击登录账户</div>
+      <div class="current_shebei">当前设备<span>{{deviceInfo.babyName || '--'}}</span></div>
+    </div>
+    <div class="person_img" v-else @click="handleLogin">
+      <!-- <img  class="person" src="/static/resources/setting/person.png"/> -->
+      <img class="person" :src="deviceInfo.babyAvatar?deviceInfo.babyAvatar:'/static/resources/setting/person.png'" />
+      <div class="account">点击登录账户</div>
       <div class="current_shebei">当前设备<span>{{deviceInfo.babyName || '--'}}</span></div>
     </div>
     <div class="setting_item" @click="onDeviceList">
