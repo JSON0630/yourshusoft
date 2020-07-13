@@ -118,7 +118,7 @@ export default class extends Vue {
   }
   private initDeviceMarker(data) {
     var deviceIcon = new AMap.Icon({
-        image: '/static/point.png',
+        image: 'https://gps.suogong.net/gpstrackanimation/static/point.png',
         imageSize: new AMap.Size(60, 60)
     });
     var deviceMarker = new AMap.Marker({
