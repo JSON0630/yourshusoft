@@ -1,7 +1,7 @@
 import api from './api'
 import request from './request'
 const { post } = request
-const appId = 'wxa283b98507d086ff'
+const appId = 'wx830de8b9fe1b325d'
 
 export default {
   /** AUDIO - 录音分页列表 */
