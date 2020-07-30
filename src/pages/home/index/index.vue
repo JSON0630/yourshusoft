@@ -61,8 +61,20 @@ export default {
     }
   },
   onLoad(options){
+    this.recordLast = { imei: '', lng: '', lat: '' } // 修改底部缓存问题
     map = wx.createMapContext('map')
     const { daohang } = options
+    if (daohang) {
+      this.handleDaohang(JSON.parse(daohang))
+    } else {
+      this.deviceListSimple()
+      this.noticeUnreadCount()
+    }
+  },
+  onShow(){
+    this.recordLast = { imei: '', lng: '', lat: '' } // 修改底部缓存问题
+    map = wx.createMapContext('map')
+    const { daohang } = ''
     if (daohang) {
       this.handleDaohang(JSON.parse(daohang))
     } else {

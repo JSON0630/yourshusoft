@@ -201,7 +201,7 @@ import { H5 } from '@/global/constants'
         const { success, data, msg }  = await this.$http.deviceUnBind({'imei':this.imei })
         if (!success) { return wx.showToast({ title: msg, icon: 'none' }) }
         wx.showToast({ title: '解除绑定', icon: 'none' }) 
-        that.getDeviceList({
+        this.getDeviceList({
           type: this.keyIndex,
           size: 10,
           number: 1,

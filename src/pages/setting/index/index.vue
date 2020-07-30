@@ -79,18 +79,18 @@ export default {
         wx.navigateTo({url: '/pages/setting/device/edit/main'})
     },
     exit(){
-        wx.showModal({
-            title: '',
-            content: '请确认是否退出登录？',
-            success : (res) =>  {
-                if(res.confirm) {
-                    console.log('用户点击确定')
-                    this.logOut()
-                } else if (res.cancel) {
-                    console.log('用户点击取消')
-                }
-            }
-        })
+      wx.showModal({
+          title: '',
+          content: '请确认是否退出登录？',
+          success : (res) =>  {
+              if(res.confirm) {
+                  console.log('用户点击确定')
+                  this.logOut()
+              } else if (res.cancel) {
+                  console.log('用户点击取消')
+              }
+          }
+      })
     },
     async logOut(){
         this.disabled =true
@@ -103,6 +103,7 @@ export default {
         if(result.code == 0){
             this.disabled = false
             wx.clearStorage()
+            this.update({imei: ''}) // 清楚缓存数据
             wx.reLaunch({url: '/pages/login/phone/main'})
         }else{
             setTimeout(function(){

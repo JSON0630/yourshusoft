@@ -1,9 +1,10 @@
 <template>
   <block>
     <div class="TopSearch" v-if="!showSelect">
-      <navigator url="/pages/setting/index/main">
+      <!-- url="/pages/setting/index/main" -->
+      <div @click="personClick" >
         <img class="img_avatar" :class="{online: device.online}" :src="device.avatar" @error="handleAvatarError"/>
-      </navigator>
+      </div>
       <div class="search" @click="showSelect=true">
         <div class="label">名称</div>
         <div class="name ellipsis">{{ device.name }}</div>
@@ -18,7 +19,7 @@
     </div>
     <div class="DeviceList" :class="{open: showSelect}">
       <div class="item"
-        v-for="(x, i) in deviceList"
+        v-for="(x, i) in list"
         :key="i"
         @click="onDeviceChange(x)"
         :class="{active: device.imei === x.imei}"
@@ -29,6 +30,7 @@
         </div>
         <div class="radius" :class="{online: x.online}"></div>
       </div>
+      <div v-if="list.length < deviceList.length" @click="handleMore" class="item more">更多</div>
     </div>
   </block>
 </template>
@@ -42,6 +44,8 @@ export default {
     deviceList: Array
   },
   data: () => ({
+    pageNum: 20,
+    list: [],
     device: {},
     showSelect: false
   }),
@@ -53,39 +57,77 @@ export default {
         name: device.name || device.babyName,
         ...device
       }
+    },
+    deviceList (list) {
+      this.list = list.slice(0, 100)
     }
   },
   methods: {
+    handleMore () {
+      this.list = [...this.list, ...this.deviceList.slice(this.pageNum, this.pageNum + 100)]
+      this.pageNum = this.pageNum + 100
+    },
     handleListImgError (x) {
       x.avatar = '/static/resources/login/user.png'
     },
     handleAvatarError () {
       this.device.avatar = '/static/resources/login/user.png'
     },
-    scanCode () {
-       const that =this
+    personClick(){
+      const that =this
         wx.showActionSheet({
-          itemList: [ '手动添加','扫码添加'],
+          itemList: [ '设备管理','流量续费','省电设置','个人中心','客服热线：0898-68928360'],
           success (res) {
+            console.log(that.device.imei)
             if(res.tapIndex == 0){
-              wx.navigateTo({url: '/pages/home/adddevice/main'})
+              wx.navigateTo({url: '/pages/setting/device/manage/main'})
             }else if(res.tapIndex == 1){
-              wx.scanCode({
-                async success (res) {
-                  console.log(result.result.split('?'))
-                if(result.result.split('?').length >1){
-                  wx.navigateTo({url: `/pages/home/adddevice/main?imei=${result.result.split('?')[1].split('=')[1]}`})
-                }else{
-                  wx.navigateTo({url: `/pages/home/adddevice/main?imei=${result.result}`})
-                }
-              }
-            })
+              wx.navigateTo({url: `/pages/setting/device/renew/main?imei=${that.device.imei}`})
+            }else if(res.tapIndex == 2){
+              wx.navigateTo({url: `/pages/setting/device/setting/main?imei=${that.device.imei}`})
+            }else if(res.tapIndex == 3){
+              wx.navigateTo({url: `/pages/setting/index/main?imei=${that.device.imei}`})
+            }else if(res.tapIndex == 4){
+              wx.makePhoneCall({
+                phoneNumber: '0898-68928360',
+                success: (result) => {
+                },
+                fail: () => {},
+                complete: () => {}
+              })
             }
           },
           fail (res) {
             console.log(res.errMsg)
           }
         })
+    },
+    scanCode () {
+      const that =this
+      wx.showActionSheet({
+        itemList: [ '手动添加','扫码添加'],
+        success (res) {
+          if(res.tapIndex == 0){
+            wx.navigateTo({url: '/pages/home/adddevice/main'})
+          }else if(res.tapIndex == 1){
+              wx.scanCode({
+              async success (result) {
+                console.log(result.result.split('?'))
+                if(result.result.split('?').length >1){
+                  wx.navigateTo({url: `/pages/home/adddevice/main?imei=${result.result.split('?')[1].split('=')[1]}`})
+                }else{
+                  wx.navigateTo({url: `/pages/home/adddevice/main?imei=${result.result}`})
+                
+                }
+                 
+              }
+          })
+          }
+        },
+        fail (res) {
+          console.log(res.errMsg)
+        }
+      })
      
     },
     onDeviceChange (device) {
@@ -111,9 +153,9 @@ export default {
 }
 .TopSearch {
   width: 720rpx;
-  height: 7.2vh;
+  height: 80rpx;
   position: absolute;
-  top: 4.2vh;
+  top: 8rpx;
   z-index: 1;
   background: #fff;
   display: flex;
@@ -135,7 +177,7 @@ export default {
       background: #878B8E;
     }
     &.online::before {
-      background: rgb(62, 236, 62);
+      background: #44b38a;
     }
   }
   .search {
@@ -143,7 +185,7 @@ export default {
     display: flex;
     align-items: center;
     flex: 1;
-    color: #666;
+    color: #44b38a;
     justify-content: space-between;
     .name {
       flex: 1;
@@ -152,20 +194,20 @@ export default {
     }
   }
   input::placeholder {
-    color: #999;
+    color: #44b38a;
     font-size: 28rpx;
   }
   .cancel {
-    color: #666;
+    color: #44b38a;
     font-size: 28rpx;
-    height: 7.2vh;
-    line-height: 7.2vh;
+    height: 80rpx;
+    line-height: 80rpx;
     padding: 0 30rpx;
   }
 }
 .DeviceList {
   position: fixed;
-  top: 12vh;
+  top: 98rpx;
   z-index: 3;
   width: 720rpx;
   height: 0;
@@ -198,8 +240,14 @@ export default {
       border-radius: 50%;
       background: gray;
       &.online {
-        background: rgb(62, 236, 62);
+        background: #44b38a;
       }
+    }
+    &.more {
+      color: #999;
+      justify-content: center;
+      border-top: 1rpx solid #eee;
+      margin-top: 20rpx;
     }
   }
 }
