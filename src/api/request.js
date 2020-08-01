@@ -24,6 +24,7 @@ export default {
         const { code, msg } = res.data
         if ([-100, -101].includes(code)) {
           wx.showToast({ title: msg, icon: 'none' })
+          wx.clearStorage()
           return wx.reLaunch({url: '/pages/setting/index/main?login=0'})
         }
         res.data.success = code === 0
